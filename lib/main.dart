@@ -10,9 +10,6 @@ void main() {
   runApp(const HavenApp());
 }
 
-/// Haven — Navigate your money with confidence.
-///
-/// Product context: HAVEN_MANIFESTO.md, HDL.md, PRODUCT_DECISIONS.md
 class HavenApp extends StatelessWidget {
   const HavenApp({super.key});
 

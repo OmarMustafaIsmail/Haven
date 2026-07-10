@@ -40,6 +40,13 @@ abstract final class HavenTypography {
         color: HavenColors.textPrimary,
       );
 
+  static TextStyle get emotionalHeadline => hero;
+
+  static TextStyle get moneyEvidence => bodySmall.copyWith(
+        fontWeight: FontWeight.w600,
+        color: HavenColors.textSecondary,
+      );
+
   static TextStyle get h1 => const TextStyle(
         fontFamily: fontFamilyDisplay,
         fontFamilyFallback: fontFamilyFallback,

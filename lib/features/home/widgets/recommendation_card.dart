@@ -6,8 +6,12 @@ import '../../../theme/haven_typography.dart';
 import '../../../widgets/haven_card.dart';
 import '../models/home_data.dart';
 
+/// Concept C recommendation — one calm suggestion with a touch of warmth.
 class RecommendationCard extends StatelessWidget {
-  const RecommendationCard({super.key, required this.recommendation});
+  const RecommendationCard({
+    super.key,
+    required this.recommendation,
+  });
 
   final RecommendationItem recommendation;
 
@@ -15,36 +19,45 @@ class RecommendationCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return HavenCard(
       color: HavenColors.surfaceElevated,
-      onTap: () {},
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            width: HavenSpacing.xl,
-            height: HavenSpacing.xl,
-            decoration: BoxDecoration(
-              color: HavenColors.primaryLight,
-              borderRadius: BorderRadius.circular(HavenSpacing.md),
-            ),
-            child: const Icon(
-              Icons.eco_rounded,
-              color: HavenColors.primary,
-              size: 20,
-            ),
-          ),
-          const SizedBox(width: HavenSpacing.md),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(recommendation.title, style: HavenTypography.title),
-                const SizedBox(height: HavenSpacing.xs),
-                Text(recommendation.body, style: HavenTypography.bodySmall),
+                Text(
+                  'Recommended for you',
+                  style: HavenTypography.title.copyWith(
+                    color: HavenColors.primary,
+                    fontSize: 16,
+                  ),
+                ),
+                const SizedBox(height: HavenSpacing.sm),
+                Text(
+                  recommendation.body,
+                  style: HavenTypography.body.copyWith(
+                    fontWeight: FontWeight.w600,
+                    height: 1.45,
+                  ),
+                ),
+                if (recommendation.subtext.isNotEmpty) ...[
+                  const SizedBox(height: HavenSpacing.sm),
+                  Text(
+                    recommendation.subtext,
+                    style: HavenTypography.bodySmall.copyWith(
+                      color: HavenColors.textSecondary,
+                    ),
+                  ),
+                ],
               ],
             ),
           ),
-          const Icon(
-            Icons.chevron_right_rounded,
-            color: HavenColors.primary,
+          const SizedBox(width: HavenSpacing.sm),
+          Icon(
+            Icons.local_florist_outlined,
+            size: 36,
+            color: HavenColors.primaryMuted,
           ),
         ],
       ),

@@ -1,329 +1,227 @@
-# Haven AI Product Partner
+# Haven Manifest
 
-## How to use this document
+Haven is not a budgeting app.
 
-This is the operating instructions for every AI session working on Haven. It defines **how to think**, not visual specs or locked decisions.
+Haven is not a banking app.
 
-- **[HDL.md](HDL.md)** — evolving design language (colors, typography, spacing, components)
-- **[PRODUCT_DECISIONS.md](PRODUCT_DECISIONS.md)** — locked decisions with rationale
+Haven is not an expense tracker.
 
-Read all three before product, design, or engineering work. Update `HDL.md` for design tokens. Log new locked decisions in `PRODUCT_DECISIONS.md`.
+Haven exists for one reason:
 
----
-
-You are no longer acting as a software engineer, UI designer, or coding assistant.
-
-You are my long-term **Product Partner**, helping me build Haven from the ground up.
-
-Your responsibility is to think like an experienced Head of Product, Design Lead, and Technical Architect working alongside a founder.
-
-We are building Haven together over months, not solving isolated tasks.
-
-Your job is not to simply agree with my ideas.
-
-Your responsibility is to challenge assumptions, improve decisions, identify flaws, and protect the long-term quality of the product.
-
-If an idea is weak, explain why.
-
-If there's a better solution, propose it.
-
-If we make a decision, help us commit to it and avoid constantly redesigning the same thing.
-
-Think long-term.
-
-Consistency is more important than novelty.
+**To help people feel confident about their money.**
 
 ---
 
-# About Haven
+## Why Haven Exists
 
-Haven is a modern personal finance platform focused on reducing financial anxiety.
+Money is not inherently stressful. Uncertainty is.
 
-Our mission is **not** to build another budgeting application.
+Most people do not need more numbers. They need clarity — the quiet certainty that they are okay, and a clear sense of what to do next when they are not.
 
-Our mission is to help people confidently make financial decisions.
+Haven exists to replace financial anxiety with financial confidence. Not through dashboards. Not through guilt. Not through complexity. Through calm, intentional guidance that respects the person behind the account.
 
-Money itself is not stressful.
-
-Uncertainty is.
-
-Most finance apps help people understand what happened.
-
-Haven helps members understand what they should do next.
-
-Everything in the product should reinforce this mission.
+If Haven disappeared tomorrow, the world would lose a place where people could open their finances and feel *reassured* rather than *overwhelmed*. A product that treats money as a means to a life well-lived — not a scoreboard to be judged.
 
 ---
 
-# Core Philosophy
+## The Emotional Problem
 
-The product should always make members feel:
+People carry financial anxiety everywhere. It surfaces when they check their balance. When a bill arrives. When they wonder if they can afford something. When they avoid opening an app because they already know it will make them feel worse.
 
-- Calm
-- Confident
-- Guided
-- In control
+The problem is not ignorance. Members often know roughly where they stand. The problem is **uncertainty** — the gap between knowing and *feeling* that you know.
 
-Never:
+Traditional finance products widen that gap. They show you what happened. They rarely tell you what it means. They almost never tell you what to do.
 
-- Judged
-- Overwhelmed
-- Guilty
-- Confused
-
-Every feature should reduce anxiety.
-
-Every interaction should build trust.
+Haven closes the gap.
 
 ---
 
-# Product Positioning
+## Why Traditional Finance Apps Fail
 
-Haven is a Financial Operating System.
+**They optimize for data, not confidence.**
+Charts, categories, and transaction lists answer "what happened?" They do not answer "am I okay?"
 
-It is not:
+**They create guilt.**
+Red numbers. Overspending alerts. Budget violations. Members leave feeling worse than when they arrived.
 
-- an expense tracker
-- a budgeting app
-- a banking application
+**They feel like work.**
+Manual entry. Reconciliation. Categorization. Finance becomes a chore instead of a companion.
 
-It is the central place where members understand and manage their financial life.
+**They look like dashboards.**
+Stacked cards. Equal-weight widgets. Everything competes for attention. Nothing communicates priority.
 
----
-
-# Product Vision
-
-Eventually Haven should understand a member's financial life automatically.
-
-Examples include:
-
-- recognizing salary deposits
-- understanding recurring income
-- understanding recurring expenses
-- detecting payments from banking notifications
-- Apple Pay
-- Google Pay
-- Instapay notifications
-- voice captured transactions
-- intelligent financial recommendations
-
-The long-term goal is reducing manual work as much as possible.
-
-Members should spend their time making decisions—not entering data.
+**They treat money as the product.**
+The balance is the hero. The experience is secondary. Haven inverts this: confidence is the product. Money is evidence.
 
 ---
 
-# Financial Pulse
+## Financial Wellbeing
 
-The Financial Pulse is the heart of Haven.
+Financial Wellbeing is the outcome Haven optimizes for.
 
-It is not a score.
+It is not net worth. It is not a credit score. It is not how much you saved this month.
 
-It is not AI.
+Financial Wellbeing is the felt sense that your financial life is understood, stable, and moving in the right direction — with clear guidance when it is not.
 
-It is a living representation of a member's financial wellbeing.
+Everything in Haven exists to improve, explain, or protect a member's Financial Wellbeing:
 
-Everything exists to improve, explain, or protect the Financial Pulse.
+- Recommendations
+- Notifications
+- Goals
+- Plans
+- Insights
 
-Recommendations.
-
-Notifications.
-
-Goals.
-
-Plans.
-
-Insights.
-
-All revolve around the Financial Pulse.
+All revolve around one question: **How am I doing?**
 
 ---
 
-# Signature Interaction
+## Financial Pulse
 
-Instead of Pull to Refresh,
+The Financial Pulse is the living representation of a member's Financial Wellbeing.
 
-Haven introduces:
+It is not a score. Members are never rated.
 
-**Pull to Check Your Financial Pulse™**
+It is not AI. It is not a chatbot pretending to care.
 
-Members gently pull down to reveal their current Financial Pulse.
+It is not a refresh indicator. It is not a loading animation.
 
-The interaction should feel calm and intentional.
+The Pulse is a **simple circle** in the Home Header — timeless, calm, neutral. Its identity comes from motion and ritual: passive breath, first-launch welcome, Check-In heartbeat, a quiet return home. Haven's recognizability is built through behaviour and emotional design, not complex symbol design.
 
-It should never feel playful or distracting.
+Members do not refresh data. They **check in**.
 
----
+The Pulse communicates state through feeling, color, and motion — never through numbers alone.
 
-# Brand
-
-**Product Name**
-
-Haven
-
-**Tagline**
-
-Navigate your money with confidence.
-
-**Logo**
-
-A minimalist geometric H containing a hidden compass.
-
-The H should be noticed first.
-
-The compass should be discovered over time.
-
-The compass represents guidance, not direction.
-
-Haven helps members understand where they are before deciding where to go.
+Full specification: [HAVEN_FINANCIAL_PULSE.md](HAVEN_FINANCIAL_PULSE.md)
 
 ---
 
-# Design Language
+## Design Philosophy
 
-We are building our own design language called
+Haven's design language is discovered while building, not declared before building. But the philosophy is fixed:
 
-**HDL**
+**Calm over exciting.**
+Nothing should startle. Nothing should rush. The interface should lower heart rate, not raise it.
 
-(Haven Design Language)
+**Confidence before data.**
+A member should know how they are doing before they see how much they have.
 
-HDL is inspired by the quality standards of:
+**One hero per screen.**
+Every screen has one thing that matters most. Everything else supports it.
 
-- Apple Human Interface Guidelines
-- Linear
-- Mercury
-- Arc Browser
-- Things 3
+**Beautiful by subtraction.**
+If an element does not earn its place, remove it. Would Linear simplify this? Would Copilot Money remove another element? If yes, simplify further.
 
-We do not copy these products.
+**Motion communicates.**
+Everything moves slowly. Everything breathes. Nothing bounces. Nothing feels playful. Motion is intentional — Apple-quality, never decorative.
 
-We study their principles.
+**Whitespace is structure.**
+Space is not empty. Space creates rhythm, hierarchy, and calm.
 
-See [HDL.md](HDL.md) for the evolving specification.
-
----
-
-# Design Principles
-
-- Calm over exciting.
-- Confidence before data.
-- One primary message per screen.
-- Motion communicates.
-- Beautiful by subtraction.
-- Automation over manual work.
-- Trust is the product.
-- Accessibility is a feature.
-- Members are never judged.
-- Explain every recommendation.
+**Members are never judged.**
+No red guilt. No shame language. No "you overspent." Haven speaks with respect.
 
 ---
 
-# Visual Style
+## AI Philosophy
 
-The interface should feel:
+Haven will use intelligence to reduce manual work and increase clarity. But AI in Haven serves trust — it does not replace it.
 
-- Apple-level minimal.
-- Premium.
-- Quiet.
-- Elegant.
-- Modern.
-- Timeless.
+**Automation over manual entry.**
+Recognize salary deposits. Understand recurring patterns. Detect transactions from notifications. Members should spend time deciding, not typing.
 
-Avoid:
+**Transparency over magic.**
+Every recommendation is explainable. Members should always understand *why* Haven suggests something.
 
-- Neon colors.
-- Heavy gradients.
-- Complex dashboards.
-- Financial clichés.
-- Charts everywhere.
-- Visual clutter.
+**Guidance over judgment.**
+AI does not scold. It does not score. It does not create anxiety to sell premium features. It guides — calmly, specifically, respectfully.
 
-Everything should breathe.
+**Human tone, not chatbot tone.**
+Haven speaks like a trusted advisor, not a customer service bot. First person when appropriate. Conversational. Never clinical.
 
-Whitespace is part of the design.
+**AI is invisible when possible.**
+The best intelligence feels like the product simply *understands*. Members should not think "the AI said" — they should think "Haven knows."
 
 ---
 
-# Engineering Philosophy
+## Writing Philosophy
 
-Engineering follows the design language.
+How Haven speaks is as important as how Haven looks.
 
-No hardcoded values.
+**Conversational, not corporate.**
+"You're in a good place" — not "Account status: Normal."
 
-Everything comes from design tokens.
+**Guidance, not information.**
+"I'd move 12,000 EGP to your Apartment fund" — not "Recommended for you: Transfer suggestion."
 
-Examples:
+**Specific, not vague.**
+Name the fund. Name the amount. Explain the benefit in one line.
 
-- HavenColors
-- HavenTypography
-- HavenSpacing
-- HavenRadius
-- HavenMotion
+**Calm, not urgent.**
+No exclamation marks. No alarm language. No artificial scarcity.
 
-Consistency is more important than cleverness.
+**First person when Haven is speaking.**
+Haven is a companion, not a dashboard. When Haven recommends, Haven uses "I" — because Haven is speaking directly to the member.
 
-Architecture should always prioritize maintainability.
-
----
-
-# Product Workflow
-
-Whenever we work together:
-
-1. First understand the problem.
-2. Then propose solutions.
-3. Then explain trade-offs.
-4. Then recommend one option.
-5. Once a decision is locked, avoid revisiting it unless there is a compelling reason.
-
-Help maintain consistency across the entire product.
-
-Do not redesign completed work unless it significantly improves the product.
+**Members, not users.**
+People who use Haven are members. They belong here.
 
 ---
 
-# Communication Style
+## Product Principles
 
-- Be direct.
-- Be honest.
-- Disagree when necessary.
-- Do not agree simply to be polite.
-- Think like an experienced product leader.
-- Focus on long-term quality rather than quick implementation.
+These principles govern every feature, screen, and interaction:
 
----
-
-# Your Responsibilities
-
-- Help define product strategy.
-- Help design the user experience.
-- Help create the Haven Design Language.
-- Help write Flutter architecture.
-- Help write engineering prompts.
-- Help challenge assumptions.
-- Help maintain consistency.
-- Protect the vision of Haven.
+1. **Reduce anxiety.** Every feature should leave members feeling calmer than before.
+2. **Answer "How am I doing?" before "How much do I have?"** Confidence is the primary output.
+3. **Money is evidence, not the product.** Numbers support confidence. They do not define the experience.
+4. **One hero per screen.** Visual hierarchy is non-negotiable.
+5. **Guidance over data.** Tell members what to do, not just what happened.
+6. **Explain every recommendation.** Trust requires transparency.
+7. **Automation over manual work.** Respect members' time.
+8. **Calm, intentional motion.** Slow. Breathing. Never playful.
+9. **Beautiful by subtraction.** Remove before you add.
+10. **Consistency over novelty.** Haven should feel like one product, not a collection of features.
 
 ---
 
-# Current Roadmap
+## Brand
 
-We are currently working on HDL (Haven Design Language).
+**Name:** Haven
 
-Current milestones:
+**Tagline:** Navigate your money with confidence.
 
-- Vision
-- Brand Identity
-- Design Principles
-- Product Philosophy
-- Logo Concept
-- Color System (draft)
-- Typography (next)
-- Spacing
-- Radius
-- Elevation & Materials
-- Motion
-- Components
-- Home Screen
+**Logo:** A minimalist geometric H containing a hidden compass. The H is noticed first. The compass is discovered over time. The compass represents guidance — understanding where you are before deciding where to go.
 
-After HDL is complete, we begin implementation in Flutter.
+---
+
+## Positioning
+
+Haven is a **Financial Operating System** — the central place where members understand and manage their financial life.
+
+It is not an expense tracker. It is not a budgeting app. It is not a banking application.
+
+It is where financial confidence lives.
+
+---
+
+## If Haven Disappeared Tomorrow
+
+The world would lose a financial companion that treats people with dignity.
+
+It would lose a product that asks "How am I doing?" instead of "How much did you spend?"
+
+It would lose proof that personal finance can feel calm — that opening a money app can feel like checking in with someone who cares, not like facing a judgment.
+
+That is what Haven is building.
+
+That is why every person who works on Haven should read this before they write a single line of code, design a single screen, or make a single product decision.
+
+---
+
+## Related Documents
+
+- [HAVEN_HOME_EXPERIENCE.md](HAVEN_HOME_EXPERIENCE.md) — the emotional experience of opening Haven
+- [HAVEN_FINANCIAL_PULSE.md](HAVEN_FINANCIAL_PULSE.md) — signature interaction specification
+- [HAVEN_ARCHITECTURE.md](HAVEN_ARCHITECTURE.md) — engineering architecture
+- [HDL.md](HDL.md) — Haven Design Language (discovered while building)
+- [PRODUCT_DECISIONS.md](PRODUCT_DECISIONS.md) — locked decisions with rationale

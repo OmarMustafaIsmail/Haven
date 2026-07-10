@@ -9,32 +9,43 @@ final class HomeLoadingState extends HomeState {}
 final class HomeLoadedState extends HomeState {
   HomeLoadedState({
     required this.data,
-    this.pullProgress = 0,
-    this.pulseRevealed = false,
-    this.pulseSettled = false,
-    this.hapticThresholdCrossed = false,
+    this.pendingCheckInData,
+    this.isCheckInActive = false,
+    this.beatProgress = 0,
+    this.isAwaitingPulseResponse = false,
+    this.pulseLineComplete = false,
+    this.pulseRevealed = true,
   });
 
   final HomeData data;
-  final double pullProgress;
+  final HomeData? pendingCheckInData;
+  final bool isCheckInActive;
+  final double beatProgress;
+  final bool isAwaitingPulseResponse;
+  final bool pulseLineComplete;
   final bool pulseRevealed;
-  final bool pulseSettled;
-  final bool hapticThresholdCrossed;
 
   HomeLoadedState copyWith({
     HomeData? data,
-    double? pullProgress,
+    HomeData? pendingCheckInData,
+    bool? isCheckInActive,
+    double? beatProgress,
+    bool? isAwaitingPulseResponse,
+    bool? pulseLineComplete,
     bool? pulseRevealed,
-    bool? pulseSettled,
-    bool? hapticThresholdCrossed,
+    bool clearPendingCheckInData = false,
   }) {
     return HomeLoadedState(
       data: data ?? this.data,
-      pullProgress: pullProgress ?? this.pullProgress,
+      pendingCheckInData: clearPendingCheckInData
+          ? null
+          : (pendingCheckInData ?? this.pendingCheckInData),
+      isCheckInActive: isCheckInActive ?? this.isCheckInActive,
+      beatProgress: beatProgress ?? this.beatProgress,
+      isAwaitingPulseResponse:
+          isAwaitingPulseResponse ?? this.isAwaitingPulseResponse,
+      pulseLineComplete: pulseLineComplete ?? this.pulseLineComplete,
       pulseRevealed: pulseRevealed ?? this.pulseRevealed,
-      pulseSettled: pulseSettled ?? this.pulseSettled,
-      hapticThresholdCrossed:
-          hapticThresholdCrossed ?? this.hapticThresholdCrossed,
     );
   }
 }

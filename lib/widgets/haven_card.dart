@@ -27,8 +27,12 @@ class HavenCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final card = Container(
       width: double.infinity,
-      margin: margin ?? const EdgeInsets.symmetric(horizontal: HavenSpacing.md),
-      padding: padding ?? const EdgeInsets.all(HavenSpacing.md),
+      margin: margin ??
+          const EdgeInsets.symmetric(
+            horizontal: HavenSpacing.md,
+            vertical: HavenSpacing.sm,
+          ),
+      padding: padding ?? const EdgeInsets.all(HavenSpacing.lg),
       decoration: BoxDecoration(
         color: color ?? HavenColors.surface,
         borderRadius: BorderRadius.circular(HavenRadius.lg),

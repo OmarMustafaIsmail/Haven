@@ -1,8 +1,24 @@
 # HDL 08 — Typography
 
-**Status:** `draft`
+## Purpose
 
-Typography validated on Home mock v1 before locking.
+Font families, type scale, and currency formatting rules.
+
+## Status
+
+**EXPERIMENTAL**
+
+## Reasoning
+
+Typography tokens were defined to support Home mock v1. SF Pro is referenced by family name with system fallback until font files are bundled.
+
+## Validation notes
+
+- Used on Home screen: greeting (h1), wellbeing answer (body), money evidence (bodySmall), guidance (body).
+- SF Pro `.otf` files not yet bundled — rendering uses platform fallback.
+- Amount display de-emphasized in Home Experience v2 — display scale may need revision.
+
+## Implementation notes
 
 **Flutter tokens:** [`lib/theme/haven_typography.dart`](../lib/theme/haven_typography.dart)
 

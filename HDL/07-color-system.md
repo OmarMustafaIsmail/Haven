@@ -1,8 +1,25 @@
 # HDL 07 — Color System
 
-**Status:** `draft`
+## Purpose
 
-The Haven color specification. Sampled from brand assets and Concept C home direction.
+The Haven color specification — brand, semantic, and Financial Pulse colors.
+
+## Status
+
+**EXPERIMENTAL**
+
+## Reasoning
+
+Colors were sampled from brand assets and Concept C home direction. They are in use on the Home screen but have not been validated across multiple member flows or screen types.
+
+## Validation notes
+
+- Validated on Home mock v1 and Home Experience v2.
+- WCAG contrast ratios calculated for light palette pairs.
+- Not yet tested on Money, Plans, Insights, or Profile screens.
+- Dark mode tokens are exploratory only — not validated.
+
+## Implementation notes
 
 **Flutter tokens:** [`lib/theme/haven_colors.dart`](../lib/theme/haven_colors.dart)
 

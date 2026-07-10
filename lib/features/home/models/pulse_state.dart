@@ -1,6 +1,1 @@
-/// Financial Pulse wellbeing state — not a score.
-enum PulseState {
-  calm,
-  strong,
-  attention,
-}
+export '../../../models/pulse_state.dart';

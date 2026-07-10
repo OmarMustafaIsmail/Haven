@@ -23,47 +23,106 @@ class HomeCubit extends BaseCubit<HomeState> with ApiCallsHandler {
     emit(HomeLoadedState(data: result.resultData!));
   }
 
-  void updatePullProgress(double progress) {
+  /// Pull began — content shifts only; hero card stays unchanged.
+  void onPullStarted() {}
+
+  /// Beat threshold — ritual begins; hero card enters reading mode.
+  void onBeatThreshold() {
     final current = state;
     if (current is! HomeLoadedState) return;
-
-    final clamped = progress.clamp(0.0, 1.0);
-    emit(
-      current.copyWith(
-        pullProgress: clamped,
-        pulseRevealed: clamped > 0,
-        hapticThresholdCrossed: clamped >= 0.45,
-      ),
-    );
+    emit(current.copyWith(
+      isCheckInActive: true,
+      beatProgress: 0,
+      pulseRevealed: false,
+      isAwaitingPulseResponse: false,
+      pulseLineComplete: false,
+      clearPendingCheckInData: true,
+    ));
   }
 
-  void onPullReleased() {
+  void onBeatProgress(double progress) {
+    final current = state;
+    if (current is! HomeLoadedState || !current.isCheckInActive) return;
+    emit(current.copyWith(beatProgress: progress));
+  }
+
+  /// Started at beat threshold — runs in parallel with the heartbeat animation.
+  Future<void> resolveBeat() async {
     final current = state;
     if (current is! HomeLoadedState) return;
 
-    if (current.pullProgress >= 0.45) {
-      emit(
-        current.copyWith(
-          pulseSettled: true,
-          pullProgress: 1,
-        ),
+    emit(current.copyWith(
+      isAwaitingPulseResponse: true,
+      pulseRevealed: false,
+      pulseLineComplete: false,
+    ));
+
+    final result = await handleApiCall(_homeService.checkInPulse);
+    if (isClosed) return;
+
+    final latest = state;
+    if (latest is! HomeLoadedState) return;
+
+    if (result.isSucceeded) {
+      _applyCheckInResult(
+        latest.copyWith(pendingCheckInData: result.resultData),
       );
-    } else {
-      resetPull();
+      return;
     }
+
+    _applyCheckInResult(latest);
   }
 
-  void resetPull() {
+  void onPulseReadingComplete() {
     final current = state;
     if (current is! HomeLoadedState) return;
 
-    emit(
-      current.copyWith(
-        pullProgress: 0,
-        pulseRevealed: false,
-        pulseSettled: false,
-        hapticThresholdCrossed: false,
-      ),
-    );
+    final withLine = current.copyWith(pulseLineComplete: true);
+    if (!withLine.isAwaitingPulseResponse) {
+      _revealCheckIn(withLine);
+      return;
+    }
+    emit(withLine);
+  }
+
+  void _applyCheckInResult(HomeLoadedState current) {
+    final withResult = current.copyWith(isAwaitingPulseResponse: false);
+
+    if (current.pulseLineComplete) {
+      _revealCheckIn(withResult);
+      return;
+    }
+
+    emit(withResult);
+  }
+
+  void _revealCheckIn(HomeLoadedState current) {
+    emit(current.copyWith(
+      data: current.pendingCheckInData ?? current.data,
+      clearPendingCheckInData: true,
+      pulseRevealed: true,
+      isAwaitingPulseResponse: false,
+    ));
+  }
+
+  void onHeartbeatFinished() {
+    final current = state;
+    if (current is! HomeLoadedState) return;
+    emit(current.copyWith(
+      isCheckInActive: false,
+      beatProgress: 0,
+      isAwaitingPulseResponse: false,
+    ));
+  }
+
+  void onReturnedHome() {
+    final current = state;
+    if (current is! HomeLoadedState) return;
+    emit(current.copyWith(
+      isCheckInActive: false,
+      beatProgress: 0,
+      isAwaitingPulseResponse: false,
+      pulseLineComplete: false,
+    ));
   }
 }

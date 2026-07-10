@@ -38,6 +38,7 @@ flutter:
   assets:
     - assets/brand/logo/
     - assets/brand/app-icon/
+    - assets/home/
 
   # Uncomment when SF Pro .otf files are added to assets/fonts/
   # fonts:

@@ -1,8 +1,26 @@
 # HDL 00 — Foundations
 
-**Status:** `locked`
+## Purpose
 
 The principles and conventions that govern every Haven Design Language decision.
+
+## Status
+
+**LOCKED**
+
+## Reasoning
+
+These principles were established during Haven's brand and product definition phase. They have been exercised in the brand identity, Home screen direction (Concept C), and the Home Experience v2 redesign. They are durable — they define how Haven thinks about design, not specific pixel values.
+
+## Validation notes
+
+- Brand identity and logo construction validated in Figma and exported to production assets.
+- Home screen Concept C scored highest on emotional criteria (reduces anxiety, communicates trust, morning habit potential).
+- Home Experience v2 applies these principles: one hero (Financial Pulse), confidence before data, subtraction over addition.
+
+## Implementation notes
+
+No direct token file. These principles are enforced through review against [HAVEN_MANIFESTO.md](../HAVEN_MANIFESTO.md) and [HAVEN_HOME_EXPERIENCE.md](../HAVEN_HOME_EXPERIENCE.md).
 
 ---
 
@@ -33,7 +51,7 @@ Whitespace is part of the design. Everything should breathe.
 
 ## Inspiration Sources
 
-Study principles from—do not copy:
+Study principles from — do not copy:
 
 - Apple Human Interface Guidelines
 - Linear
@@ -43,33 +61,12 @@ Study principles from—do not copy:
 
 ---
 
-## Token Naming Convention
+## Quality Bar
 
-All design values are expressed as tokens. No hardcoded values in implementation.
+Before shipping any screen, ask:
 
-| Token family | Purpose |
-|---|---|
-| `HavenColors` | Color palette and semantic colors |
-| `HavenTypography` | Type scale, weights, line heights |
-| `HavenSpacing` | Spacing scale |
-| `HavenRadius` | Border radius scale |
-| `HavenMotion` | Duration, easing, animation principles |
-| `HavenElevation` | Shadows, blur, materials |
+- Would Apple ship this?
+- Would Linear simplify this?
+- Would Copilot Money remove another element?
 
-Flutter token files live in [`lib/theme/`](../lib/theme/). Figma variable names must match 1:1.
-
----
-
-## HDL Roadmap
-
-| # | Document | Status |
-|---|---|---|
-| 00 | Foundations | locked |
-| 01 | Brand Assets | locked |
-| 07 | Color System | draft |
-| 08 | Typography | pending |
-| 09 | Spacing | pending |
-| 10 | Radius | pending |
-| 11 | Elevation & Materials | pending |
-| 12 | Motion | pending |
-| 20 | Components | pending |
+If not, simplify further.

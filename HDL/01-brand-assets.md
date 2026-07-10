@@ -1,13 +1,33 @@
 # HDL 01 — Brand Assets
 
-**Status:** `locked`
+## Purpose
 
-Logo usage rules and asset inventory. Construction rules are locked in [PRODUCT_DECISIONS.md](../PRODUCT_DECISIONS.md).
+Logo usage rules, construction specifications, and asset inventory.
+
+## Status
+
+**LOCKED**
+
+## Reasoning
+
+Logo construction rules were defined in Figma with mathematical precision. Assets are exported and wired into the app. Brand identity is proven and should not change without compelling reason.
+
+## Validation notes
+
+- Logo exported from Figma and rendered in Flutter via `flutter_svg`.
+- App icons generated via `flutter_launcher_icons`.
+- Construction grid validated against brand identity reference.
+
+## Implementation notes
+
+- Figma source: [Haven Brand Assets](https://www.figma.com/design/qJe22LWuxcsQ0bcLxg0eov/Haven-Brand-Assets)
+- Flutter widget: [`lib/widgets/haven_logo.dart`](../lib/widgets/haven_logo.dart)
+- Assets: [`assets/brand/`](../assets/brand/)
+- Decisions: [PRODUCT_DECISIONS.md](../PRODUCT_DECISIONS.md) PD-005, PD-006, PD-017
 
 Reference: [assets/brand/brand-identity.png](../assets/brand/brand-identity.png)
 
 ---
-
 ## Logo Concept
 
 The **Hidden Compass H** — a minimalist geometric uppercase H. The horizontal crossbar is a compass needle pointing North. The H is noticed first; the compass is discovered over time.

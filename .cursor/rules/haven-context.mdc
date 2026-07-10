@@ -5,11 +5,14 @@ alwaysApply: true
 
 # Haven Product Context
 
-Before any product, design, or engineering work on Haven, read these three documents:
+Before any product, design, or engineering work on Haven, read these documents:
 
-1. [HAVEN_MANIFESTO.md](HAVEN_MANIFESTO.md) — how to think (responsibilities, philosophy, workflow)
-2. [HDL.md](HDL.md) — how it looks (design tokens and specs)
-3. [PRODUCT_DECISIONS.md](PRODUCT_DECISIONS.md) — what is locked (decisions with rationale)
+1. [HAVEN_MANIFESTO.md](HAVEN_MANIFESTO.md) — why Haven exists (product soul)
+2. [HAVEN_HOME_EXPERIENCE.md](HAVEN_HOME_EXPERIENCE.md) — daily financial ritual on Home
+3. [HAVEN_FINANCIAL_PULSE.md](HAVEN_FINANCIAL_PULSE.md) — Check-In interaction (Home Experience v4)
+4. [HAVEN_ARCHITECTURE.md](HAVEN_ARCHITECTURE.md) — engineering architecture
+5. [HDL.md](HDL.md) — design language (discovered while building)
+6. [PRODUCT_DECISIONS.md](PRODUCT_DECISIONS.md) — locked decisions with rationale
 
 ## Workflow
 
@@ -22,7 +25,7 @@ Before any product, design, or engineering work on Haven, read these three docum
 ## Rules
 
 - Check PRODUCT_DECISIONS.md before proposing changes to locked decisions.
-- Update HDL.md for new design tokens — not the manifesto.
+- Update HDL for validated design patterns — not the manifesto.
 - Log new locked decisions in PRODUCT_DECISIONS.md with date and rationale.
 - Disagree when necessary. Do not agree to be polite.
 - Refer to people as "members," not "users."

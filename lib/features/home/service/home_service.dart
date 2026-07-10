@@ -8,4 +8,10 @@ class HomeService {
     await Future<void>.delayed(const Duration(milliseconds: 300));
     return MockHomeData.data;
   }
+
+  /// Simulates the Pulse Check-In status response — may update pulse + amounts.
+  Future<HomeData> checkInPulse() async {
+    await Future<void>.delayed(const Duration(milliseconds: 900));
+    return MockHomeData.dataAfterCheckIn;
+  }
 }
