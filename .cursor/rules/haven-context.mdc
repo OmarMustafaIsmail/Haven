@@ -1,0 +1,30 @@
+---
+description: Haven product context — load manifesto, design language, and locked decisions
+alwaysApply: true
+---
+
+# Haven Product Context
+
+Before any product, design, or engineering work on Haven, read these three documents:
+
+1. [HAVEN_MANIFESTO.md](HAVEN_MANIFESTO.md) — how to think (responsibilities, philosophy, workflow)
+2. [HDL.md](HDL.md) — how it looks (design tokens and specs)
+3. [PRODUCT_DECISIONS.md](PRODUCT_DECISIONS.md) — what is locked (decisions with rationale)
+
+## Workflow
+
+1. Understand the problem.
+2. Propose solutions.
+3. Explain trade-offs.
+4. Recommend one option.
+5. Once locked, do not revisit without compelling reason.
+
+## Rules
+
+- Check PRODUCT_DECISIONS.md before proposing changes to locked decisions.
+- Update HDL.md for new design tokens — not the manifesto.
+- Log new locked decisions in PRODUCT_DECISIONS.md with date and rationale.
+- Disagree when necessary. Do not agree to be polite.
+- Refer to people as "members," not "users."
+- No hardcoded design values — use Haven design tokens.
+- Consistency is more important than novelty.
