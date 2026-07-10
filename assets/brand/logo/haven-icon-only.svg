@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 50" fill="none">
+  <!-- Haven Hidden Compass H  geometric construction: bars 2X, gap X, needle X -->
+  <!-- X = 10 units. Left bar: 0-20. Gap: 20-30. Right bar: 30-50. -->
+  <rect x="0" y="0" width="20" height="50" rx="4" fill="#1D544E"/>
+  <rect x="30" y="0" width="20" height="50" rx="4" fill="#1D544E"/>
+  <!-- Compass needle pointing North (diamond) -->
+  <path d="M25 18 L32 25 L25 32 L18 25 Z" fill="#1D544E"/>
+</svg>

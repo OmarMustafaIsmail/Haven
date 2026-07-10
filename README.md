@@ -14,7 +14,7 @@ Start here for every session:
 
 ## Current Milestone
 
-**HDL Color System** (in progress)
+**HDL Typography** (next)
 
 ## Roadmap
 
@@ -23,12 +23,12 @@ Start here for every session:
 - Design Principles
 - Product Philosophy
 - Logo Concept
-- Color System (in progress)
-- Typography
+- Color System
+- Typography (next)
 - Spacing
 - Radius
+- Elevation & Materials
 - Motion
-- Icons
 - Components
 - Home Screen
 

@@ -142,3 +142,101 @@ Reference: [assets/concepts/home-concepts-evaluation.png](assets/concepts/home-c
 - **Alternatives rejected:** Gradient icons, illustrative icons, non-geometric marks.
 
 Reference: [assets/brand/brand-identity.png](assets/brand/brand-identity.png)
+
+---
+
+### Primary brand color
+- **Status:** Locked
+- **Date:** 2026-07-10
+- **Decision:** Haven primary brand color is `#1D544E` (deep teal). Supporting brand tokens: `primaryDark` `#143D39`, `primaryLight` `#E8F2F0`, `primaryMuted` `#A5C2C0`.
+- **Rationale:** Sampled from brand identity assets. Calm, premium, distinctive — not neon, not generic finance green.
+- **Alternatives rejected:** Brighter teals, generic `#008080`, blue-green fintech palette.
+
+Reference: [HDL/07-color-system.md](HDL/07-color-system.md)
+
+---
+
+### Light palette
+- **Status:** Locked
+- **Date:** 2026-07-10
+- **Decision:** Light mode uses warm off-white backgrounds (`#FAFBFC`), white surfaces, and neutral text hierarchy (`#1A1A1C` / `#5A6167` / `#8E9499`).
+- **Rationale:** Aligns with Concept C's human, reassuring feel. Avoids clinical pure-white app shells.
+- **Alternatives rejected:** Pure white `#FFFFFF` backgrounds, cool gray corporate palette.
+
+---
+
+### Semantic color values
+- **Status:** Locked
+- **Date:** 2026-07-10
+- **Decision:** Status colors: Good `#4A9B6E`, Attention `#C4862B`, Action `#C44D4D`, Interactive `#3D7BF5`. Each has a tinted background variant for status cards.
+- **Rationale:** Calm and muted — communicates state without alarm. Warm amber for attention, not screaming orange.
+- **Alternatives rejected:** Traffic-light neon colors, binary red/green only, `#FF0000` alarm red.
+
+---
+
+### Financial Pulse colors
+- **Status:** Locked
+- **Date:** 2026-07-10
+- **Decision:** Pulse states: Calm `#4A9B6E`, Strong `#1D544E`, Attention `#C4862B`. Pull reveal uses `#E8F2F0` → `#FFFFFF` gradient with `#1D544E` accent.
+- **Rationale:** Wellbeing framing — not a score, not gamified. Pull interaction feels calm and intentional.
+- **Alternatives rejected:** Score-style red-to-green gradients, animated rainbow pulses, gauge-style color ranges.
+
+---
+
+### Logo SVG assets
+- **Status:** Locked
+- **Date:** 2026-07-10
+- **Decision:** Logo assets created as SVG from geometric construction spec (2X bars, X gap, compass needle). PNG exports generated at 1024–16px. App icons in light, dark, and monochrome variants.
+- **Rationale:** Production-ready assets for Flutter, Figma, and platform stores. SVG ensures infinite scalability.
+- **Alternatives rejected:** Raster-only logos, hand-traced without geometric grid.
+
+Reference: [HDL/01-brand-assets.md](HDL/01-brand-assets.md), [assets/brand/logo/](assets/brand/logo/)
+
+---
+
+### Primary brand color
+- **Status:** Locked
+- **Date:** 2026-07-10
+- **Decision:** Haven primary brand color is `#1D544E` (deep teal). Supporting brand tokens: `primaryDark` `#143D39`, `primaryLight` `#E8F2F0`, `primaryMuted` `#A5C2C0`.
+- **Rationale:** Sampled from brand identity assets. Calm, premium, distinctive — not neon, not generic finance green.
+- **Alternatives rejected:** Brighter teals, generic `#008080`, blue-green fintech palette.
+
+Reference: [HDL/07-color-system.md](HDL/07-color-system.md)
+
+---
+
+### Light palette
+- **Status:** Locked
+- **Date:** 2026-07-10
+- **Decision:** Light mode uses warm off-white backgrounds (`#FAFBFC`), white surfaces, and neutral text hierarchy (`#1A1A1C` / `#5A6167` / `#8E9499`).
+- **Rationale:** Aligns with Concept C's human, reassuring feel. Avoids clinical pure-white app shells.
+- **Alternatives rejected:** Pure white `#FFFFFF` backgrounds, cool gray corporate palette.
+
+---
+
+### Semantic color values
+- **Status:** Locked
+- **Date:** 2026-07-10
+- **Decision:** Status colors: Good `#4A9B6E`, Attention `#C4862B`, Action `#C44D4D`, Interactive `#3D7BF5`. Each has a tinted background variant for status cards.
+- **Rationale:** Calm and muted — communicates state without alarm. Warm amber for attention, not screaming orange.
+- **Alternatives rejected:** Traffic-light neon colors, binary red/green only, `#FF0000` alarm red.
+
+---
+
+### Financial Pulse colors
+- **Status:** Locked
+- **Date:** 2026-07-10
+- **Decision:** Pulse states: Calm `#4A9B6E`, Strong `#1D544E`, Attention `#C4862B`. Pull reveal uses `#E8F2F0` → `#FFFFFF` gradient with `#1D544E` accent.
+- **Rationale:** Wellbeing framing — not a score, not gamified. Pull interaction feels calm and intentional.
+- **Alternatives rejected:** Score-style red-to-green gradients, animated rainbow pulses, gauge-style color ranges.
+
+---
+
+### Logo SVG assets
+- **Status:** Locked
+- **Date:** 2026-07-10
+- **Decision:** Logo assets created as SVG from geometric construction spec (2X bars, X gap, compass needle). PNG exports generated at 1024–16px. App icons in light, dark, and monochrome variants.
+- **Rationale:** Production-ready assets for Flutter, Figma, and platform stores. SVG ensures infinite scalability.
+- **Alternatives rejected:** Raster-only logos, hand-traced without geometric grid.
+
+Reference: [HDL/01-brand-assets.md](HDL/01-brand-assets.md), [assets/brand/logo/](assets/brand/logo/)

@@ -317,12 +317,12 @@ Current milestones:
 - Design Principles
 - Product Philosophy
 - Logo Concept
-- Color System (in progress)
-- Typography
+- Color System
+- Typography (next)
 - Spacing
 - Radius
+- Elevation & Materials
 - Motion
-- Icons
 - Components
 - Home Screen
 
