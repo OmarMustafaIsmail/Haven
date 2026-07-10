@@ -1,0 +1,58 @@
+name: haven
+description: "Navigate your money with confidence."
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.12.2
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_bloc: ^9.1.1
+  equatable: ^2.0.7
+  flutter_svg: ^2.2.0
+  intl: ^0.20.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+  flutter_launcher_icons: ^0.14.4
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: assets/brand/app-icon/icon-light-1024.png
+  web:
+    generate: true
+    image_path: assets/brand/app-icon/icon-light-1024.png
+    background_color: "#1D544E"
+    theme_color: "#1D544E"
+  remove_alpha_ios: true
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/brand/logo/
+    - assets/brand/app-icon/
+
+  # Uncomment when SF Pro .otf files are added to assets/fonts/
+  # fonts:
+  #   - family: SF Pro Text
+  #     fonts:
+  #       - asset: assets/fonts/SF-Pro-Text-Regular.otf
+  #       - asset: assets/fonts/SF-Pro-Text-Medium.otf
+  #         weight: 500
+  #       - asset: assets/fonts/SF-Pro-Text-Semibold.otf
+  #         weight: 600
+  #       - asset: assets/fonts/SF-Pro-Text-Bold.otf
+  #         weight: 700
+  #   - family: SF Pro Display
+  #     fonts:
+  #       - asset: assets/fonts/SF-Pro-Display-Semibold.otf
+  #         weight: 600
+  #       - asset: assets/fonts/SF-Pro-Display-Bold.otf
+  #         weight: 700

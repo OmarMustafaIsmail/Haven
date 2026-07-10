@@ -56,7 +56,7 @@ All design values are expressed as tokens. No hardcoded values in implementation
 | `HavenMotion` | Duration, easing, animation principles |
 | `HavenElevation` | Shadows, blur, materials |
 
-Flutter token files live in [`design_tokens/`](../design_tokens/). Figma variable names must match 1:1.
+Flutter token files live in [`lib/theme/`](../lib/theme/). Figma variable names must match 1:1.
 
 ---
 
@@ -66,7 +66,7 @@ Flutter token files live in [`design_tokens/`](../design_tokens/). Figma variabl
 |---|---|---|
 | 00 | Foundations | locked |
 | 01 | Brand Assets | locked |
-| 07 | Color System | locked |
+| 07 | Color System | draft |
 | 08 | Typography | pending |
 | 09 | Spacing | pending |
 | 10 | Radius | pending |

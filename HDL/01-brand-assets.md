@@ -31,16 +31,20 @@ The **Hidden Compass H** — a minimalist geometric uppercase H. The horizontal 
 
 ## Asset Inventory
 
+**Figma source:** [Haven Brand Assets](https://www.figma.com/design/qJe22LWuxcsQ0bcLxg0eov/Haven-Brand-Assets)
+
+Export guide: [`assets/brand/source/FIGMA_EXPORT.md`](../assets/brand/source/FIGMA_EXPORT.md)
+
+Automated export: `python scripts/figma_export_logos.py` (requires `FIGMA_TOKEN`)
+
 ### Logo — SVG
 
-| File | Description |
-|---|---|
-| [`haven-logo-primary.svg`](../assets/brand/logo/haven-logo-primary.svg) | Teal icon + HAVEN wordmark on transparent |
-| [`haven-logo-dark.svg`](../assets/brand/logo/haven-logo-dark.svg) | Dark text variant |
-| [`haven-logo-light.svg`](../assets/brand/logo/haven-logo-light.svg) | Light/muted teal variant |
-| [`haven-logo-monochrome-black.svg`](../assets/brand/logo/haven-logo-monochrome-black.svg) | Black on transparent |
-| [`haven-logo-monochrome-white.svg`](../assets/brand/logo/haven-logo-monochrome-white.svg) | White on transparent |
-| [`haven-icon-only.svg`](../assets/brand/logo/haven-icon-only.svg) | H icon only, teal |
+| File | Description | Figma node |
+|---|---|---|
+| [`haven-icon-primary.svg`](../assets/brand/logo/haven-icon-primary.svg) | Primary teal H icon | `2:5` Logo/ H primary |
+| [`haven-icon-light.svg`](../assets/brand/logo/haven-icon-light.svg) | Light variant | `2:6` Logo/ H light |
+| [`haven-icon-dark.svg`](../assets/brand/logo/haven-icon-dark.svg) | Dark variant | `2:8` Logo/ H dark |
+| [`haven-icon-only.svg`](../assets/brand/logo/haven-icon-only.svg) | Alias for primary icon | `2:5` |
 
 ### Logo — PNG
 
@@ -53,9 +57,9 @@ Exported from SVG at heights: 1024, 512, 256, 128, 64, 32, 16.
 
 ### App Icon — PNG
 
-| File | Size | Platform |
-|---|---|---|
-| `icon-light-1024.png` | 1024×1024 | iOS App Store |
+| File | Size | Platform | Figma node |
+|---|---|---|---|
+| `icon-light-1024.png` | 1024×1024 | iOS App Store | `2:16` App logo |
 | `icon-light-512.png` | 512×512 | iOS |
 | `icon-light-180.png` | 180×180 | iOS Settings |
 | `icon-dark-1024.png` | 1024×1024 | iOS App Store (dark) |

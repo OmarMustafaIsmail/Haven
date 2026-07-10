@@ -12,9 +12,27 @@ Start here for every session:
 2. **[HDL.md](HDL.md)** — Haven Design Language (evolving design tokens and specs)
 3. **[PRODUCT_DECISIONS.md](PRODUCT_DECISIONS.md)** — locked decisions with rationale
 
+## Flutter App
+
+```
+lib/
+├── main.dart
+├── theme/
+│   ├── haven_colors.dart
+│   └── haven_theme.dart
+└── widgets/
+    └── haven_logo.dart     # SVG logo from Figma exports
+```
+
+Brand assets: `assets/brand/logo/` (SVG) · `assets/brand/app-icon/` (PNG)
+
+```bash
+flutter run
+```
+
 ## Current Milestone
 
-**HDL Typography** (next)
+**HDL Typography** (next) · Color System (draft)
 
 ## Roadmap
 
@@ -23,7 +41,7 @@ Start here for every session:
 - Design Principles
 - Product Philosophy
 - Logo Concept
-- Color System
+- Color System (draft)
 - Typography (next)
 - Spacing
 - Radius
@@ -31,5 +49,3 @@ Start here for every session:
 - Motion
 - Components
 - Home Screen
-
-Flutter implementation begins after HDL is complete.

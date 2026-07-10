@@ -317,7 +317,7 @@ Current milestones:
 - Design Principles
 - Product Philosophy
 - Logo Concept
-- Color System
+- Color System (draft)
 - Typography (next)
 - Spacing
 - Radius

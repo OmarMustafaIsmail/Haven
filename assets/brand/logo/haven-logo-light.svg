@@ -1,6 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 60" fill="none">
-  <rect x="0" y="5" width="20" height="50" rx="4" fill="#5A8A84"/>
-  <rect x="30" y="5" width="20" height="50" rx="4" fill="#5A8A84"/>
-  <path d="M25 23 L32 30 L25 37 L18 30 Z" fill="#5A8A84"/>
-  <text x="62" y="42" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="28" font-weight="500" letter-spacing="6" fill="#5A8A84">HAVEN</text>
-</svg>

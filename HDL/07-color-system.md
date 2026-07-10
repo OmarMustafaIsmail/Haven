@@ -1,10 +1,40 @@
 # HDL 07 — Color System
 
-**Status:** `locked`
+**Status:** `draft`
 
-The complete Haven color specification. Sampled from brand assets and Concept C home direction.
+The Haven color specification. Sampled from brand assets and Concept C home direction.
 
-**Flutter tokens:** [`design_tokens/haven_colors.dart`](../design_tokens/haven_colors.dart)
+**Flutter tokens:** [`lib/theme/haven_colors.dart`](../lib/theme/haven_colors.dart)
+
+---
+
+## Philosophy
+
+Color in Haven communicates meaning, never decoration.
+
+Every color should help members understand their financial state with confidence.
+
+- Brand colors create trust.
+- Semantic colors create clarity.
+- Whitespace creates calm.
+
+The interface should never rely on color alone to communicate information.
+
+Avoid bright saturated palettes, unnecessary gradients, and decorative accents.
+
+---
+
+## Color Hierarchy
+
+Color should become progressively stronger only as interaction importance increases.
+
+1. **Background** — the calmest layer; the app shell
+2. **Surface** — cards and containers that hold content
+3. **Primary Content** — headings, amounts, essential text
+4. **Secondary Content** — labels, supporting text, metadata
+5. **Brand Accent** — primary teal; reserved for identity and key actions
+6. **Semantic Status** — Good, Attention, Action; financial state communication
+7. **Interactive** — tappable, in-progress, highlighted elements
 
 ---
 
@@ -18,6 +48,8 @@ Extracted from [`assets/brand/brand-identity.png`](../assets/brand/brand-identit
 | `HavenColors.primaryDark` | `#143D39` | Dark app icon background, pressed states |
 | `HavenColors.primaryLight` | `#E8F2F0` | Subtle tinted backgrounds, selected states |
 | `HavenColors.primaryMuted` | `#A5C2C0` | Decorative accents, soft highlights |
+
+> Brand color is currently provisional and may receive minor refinement after the first complete UI pass. The overall hue (deep calming teal) is part of Haven's identity and should not dramatically change.
 
 ---
 
@@ -38,9 +70,13 @@ Warm, human, reassuring — aligned with Concept C. Backgrounds are off-white, n
 
 ---
 
-## Dark Palette
+## Future Dark Theme
 
-Defined for future use. Light mode ships first per [PRODUCT_DECISIONS.md](../PRODUCT_DECISIONS.md).
+**Status:** `planned`
+
+Haven launches light-first. Dark mode will be designed after the complete light experience is finalized to ensure visual parity rather than creating two independent systems.
+
+Placeholder tokens below are exploratory — not approved for implementation.
 
 | Token | Hex | Usage |
 |---|---|---|
@@ -64,7 +100,9 @@ Mapped to the status legend. Calm and muted — never alarming.
 | `HavenColors.statusGood` | `#4A9B6E` | Good | On-track, positive status |
 | `HavenColors.statusAttention` | `#C4862B` | Attention | Awareness, not alarm |
 | `HavenColors.statusAction` | `#C44D4D` | Action needed | Requires member action |
-| `HavenColors.statusInteractive` | `#3D7BF5` | Interactive | Tappable, in-progress |
+| `HavenColors.statusInteractive` | `#4A8F88` | Interactive | Tappable, in-progress, highlighted |
+
+`statusInteractive` is a refined teal — harmonious with the primary palette, not a generic Material blue.
 
 ### Semantic Backgrounds (Light)
 
@@ -75,7 +113,7 @@ For status cards and pills. Tinted, not saturated.
 | `HavenColors.statusGoodBg` | `#EDF7F0` | `statusGood` |
 | `HavenColors.statusAttentionBg` | `#FBF5EC` | `statusAttention` |
 | `HavenColors.statusActionBg` | `#FBEFEF` | `statusAction` |
-| `HavenColors.statusInteractiveBg` | `#EEF3FE` | `statusInteractive` |
+| `HavenColors.statusInteractiveBg` | `#E8F4F2` | `statusInteractive` |
 
 ---
 
@@ -126,15 +164,13 @@ All pairs tested against WCAG 2.1 AA (4.5:1 normal text, 3:1 large text).
 
 ## Flutter Tokens
 
-Implementation in [`design_tokens/haven_colors.dart`](../design_tokens/haven_colors.dart).
+Implementation in [`lib/theme/haven_colors.dart`](../lib/theme/haven_colors.dart).
 
 ```dart
 // Usage — never hardcode hex in widgets
 Container(color: HavenColors.surface)
 Text('42,350 EGP', style: TextStyle(color: HavenColors.textPrimary))
 ```
-
-When the Flutter project is scaffolded, move to `lib/theme/haven_colors.dart`.
 
 ---
 
@@ -158,13 +194,13 @@ Create a **HavenColors** collection. Variable names must match Flutter tokens ex
 | `HavenColors/statusGood` | `#4A9B6E` | Color |
 | `HavenColors/statusAttention` | `#C4862B` | Color |
 | `HavenColors/statusAction` | `#C44D4D` | Color |
-| `HavenColors/statusInteractive` | `#3D7BF5` | Color |
+| `HavenColors/statusInteractive` | `#4A8F88` | Color |
 | `HavenColors/pulseCalm` | `#4A9B6E` | Color |
 | `HavenColors/pulseStrong` | `#1D544E` | Color |
 | `HavenColors/pulseAttention` | `#C4862B` | Color |
 | `HavenColors/pulseReveal` | `#E8F2F0` | Color |
 
-Enable **Light** and **Dark** modes. Map dark tokens when dark mode HDL is finalized.
+Dark mode variables will be added when the Future Dark Theme is designed.
 
 ---
 
@@ -196,6 +232,14 @@ Body:        textSecondary (#5A6167)
 Action:      primary (#1D544E) — chevron, link
 ```
 
+### Interactive Element
+
+```
+Background:  statusInteractiveBg (#E8F4F2)
+Indicator:   statusInteractive (#4A8F88) — in-progress, highlighted
+Text:        textPrimary (#1A1A1C)
+```
+
 ### Bottom Navigation
 
 ```
@@ -223,13 +267,16 @@ State calm:          pulseCalm (#4A9B6E)
 - Use `primaryMuted` for decorative accents, not `primary` at reduced opacity.
 - Test new color pairs against WCAG AA before locking.
 - Keep Financial Pulse colors calm — wellbeing, not gamification.
+- Follow the color hierarchy — stronger color only as importance increases.
 
 ## Do Not
 
 - Use neon or saturated accent colors.
 - Use pure alarm red (`#FF0000`) for status — use `statusAction` (`#C44D4D`).
 - Use orange for brand elements (off-brand per logo rules).
+- Use generic Material blue for interactive states.
 - Apply drop shadows or glows to the logo.
 - Use `primary` on `primaryLight` without checking contrast.
 - Hardcode colors in components — always reference tokens.
 - Use traffic-light semantics without the four-state system (Good, Attention, Action, Interactive).
+- Mark the color system as locked before real screens validate the palette.
