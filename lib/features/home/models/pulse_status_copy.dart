@@ -1,22 +1,11 @@
 import '../../../models/pulse_state.dart';
 
-/// Product copy tied to [PulseState] — calm, strong, attention.
+/// Financial State copy — tied exclusively to [PulseState] (Hero Layer 1).
 abstract final class PulseStatusCopy {
-  static String headline(PulseState state) => switch (state) {
-    PulseState.calm => "You're doing great!",
-    PulseState.strong => "You're in a strong place.",
-    PulseState.attention => 'Something needs your attention.',
-  };
-
-  static String detail(PulseState state) => switch (state) {
-    PulseState.calm => 'Nothing needs your attention right now.',
-    PulseState.strong => 'Your finances feel steady and confident.',
-    PulseState.attention => 'A gentle review would help today.',
-  };
-
-  static String readingLabel(PulseState state) => switch (state) {
-    PulseState.calm => 'Steady',
-    PulseState.strong => 'Strong',
-    PulseState.attention => 'Awareness',
-  };
+  /// Single-line wellbeing message. Changes only when Pulse changes.
+  static String financialState(PulseState state) => switch (state) {
+        PulseState.calm => "You're in a strong place.",
+        PulseState.strong => "You're in a strong place.",
+        PulseState.attention => 'Some things need attention.',
+      };
 }

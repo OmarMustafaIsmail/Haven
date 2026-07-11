@@ -1,38 +1,43 @@
 # HDL 01 — Brand Assets
 
-## Purpose
+**Status:** LOCKED
 
-Logo usage rules, construction specifications, and asset inventory.
+**Implementation:** [`lib/widgets/haven_logo.dart`](../lib/widgets/haven_logo.dart) · [`assets/brand/`](../assets/brand/)
 
-## Status
-
-**LOCKED**
-
-## Reasoning
-
-Logo construction rules were defined in Figma with mathematical precision. Assets are exported and wired into the app. Brand identity is proven and should not change without compelling reason.
-
-## Validation notes
-
-- Logo exported from Figma and rendered in Flutter via `flutter_svg`.
-- App icons generated via `flutter_launcher_icons`.
-- Construction grid validated against brand identity reference.
-
-## Implementation notes
-
-- Figma source: [Haven Brand Assets](https://www.figma.com/design/qJe22LWuxcsQ0bcLxg0eov/Haven-Brand-Assets)
-- Flutter widget: [`lib/widgets/haven_logo.dart`](../lib/widgets/haven_logo.dart)
-- Assets: [`assets/brand/`](../assets/brand/)
-- Decisions: [PRODUCT_DECISIONS.md](../PRODUCT_DECISIONS.md) PD-005, PD-006, PD-017
-
-Reference: [assets/brand/brand-identity.png](../assets/brand/brand-identity.png)
+**Decisions:** PD-005, PD-006, PD-017 in [PRODUCT_DECISIONS.md](../PRODUCT_DECISIONS.md)
 
 ---
-## Logo Concept
 
-The **Hidden Compass H** — a minimalist geometric uppercase H. The horizontal crossbar is a compass needle pointing North. The H is noticed first; the compass is discovered over time.
+## Purpose
 
-### Construction Grid
+Logo usage rules, construction specifications, and asset inventory. Ensures the Haven mark renders consistently across digital and print.
+
+**Figma source:** [Haven Brand Assets](https://www.figma.com/design/qJe22LWuxcsQ0bcLxg0eov/Haven-Brand-Assets)
+
+---
+
+## Principles
+
+- The **Hidden Compass H** — minimalist geometric uppercase H. Horizontal crossbar is a compass needle pointing North.
+- The H is noticed first; the compass is discovered over time.
+- Logo integrity over decoration — no effects, no off-brand colors.
+- SVG preferred for scalability.
+
+---
+
+## Tokens
+
+Brand colors for logo usage align with [HDL/07-color-system.md](07-color-system.md):
+
+| Context | Token |
+|---|---|
+| Primary mark | `HavenColors.primary` |
+| Light variant backgrounds | `HavenColors.surface` |
+| Dark variant backgrounds | `HavenColors.primaryDark` |
+
+---
+
+## Construction
 
 | Element | Measurement |
 |---|---|
@@ -42,16 +47,14 @@ The **Hidden Compass H** — a minimalist geometric uppercase H. The horizontal 
 | Clear space (all sides) | X |
 | Corner radius | Rounded on all geometric elements |
 
-### Minimum Size
+### Minimum size
 
 - Digital: 16px height
 - Print: 12mm height
 
 ---
 
-## Asset Inventory
-
-**Figma source:** [Haven Brand Assets](https://www.figma.com/design/qJe22LWuxcsQ0bcLxg0eov/Haven-Brand-Assets)
+## Asset inventory
 
 Export guide: [`assets/brand/source/FIGMA_EXPORT.md`](../assets/brand/source/FIGMA_EXPORT.md)
 
@@ -59,51 +62,83 @@ Automated export: `python scripts/figma_export_logos.py` (requires `FIGMA_TOKEN`
 
 ### Logo — SVG
 
-| File | Description | Figma node |
-|---|---|---|
-| [`haven-icon-primary.svg`](../assets/brand/logo/haven-icon-primary.svg) | Primary teal H icon | `2:5` Logo/ H primary |
-| [`haven-icon-light.svg`](../assets/brand/logo/haven-icon-light.svg) | Light variant | `2:6` Logo/ H light |
-| [`haven-icon-dark.svg`](../assets/brand/logo/haven-icon-dark.svg) | Dark variant | `2:8` Logo/ H dark |
-| [`haven-icon-only.svg`](../assets/brand/logo/haven-icon-only.svg) | Alias for primary icon | `2:5` |
+| File | Description |
+|---|---|
+| `haven-icon-primary.svg` | Primary teal H icon |
+| `haven-icon-light.svg` | Light variant |
+| `haven-icon-dark.svg` | Dark variant |
+| `haven-icon-only.svg` | Alias for primary icon |
 
 ### Logo — PNG
 
-Exported from SVG at heights: 1024, 512, 256, 128, 64, 32, 16.
+Exported at heights: 1024, 512, 256, 128, 64, 32, 16 in `assets/brand/logo/png/`.
 
-| Directory | Contents |
-|---|---|
-| [`assets/brand/logo/png/`](../assets/brand/logo/png/) | Full logo PNG exports |
-| [`assets/brand/logo/png/icon-only/`](../assets/brand/logo/png/icon-only/) | Icon-only PNG exports |
+### App icon — PNG
 
-### App Icon — PNG
+Located in `assets/brand/app-icon/` — light, dark, and monochrome variants for iOS and Android.
 
-| File | Size | Platform | Figma node |
-|---|---|---|---|
-| `icon-light-1024.png` | 1024×1024 | iOS App Store | `2:16` App logo |
-| `icon-light-512.png` | 512×512 | iOS |
-| `icon-light-180.png` | 180×180 | iOS Settings |
-| `icon-dark-1024.png` | 1024×1024 | iOS App Store (dark) |
-| `icon-dark-192.png` | 192×192 | Android |
-| `icon-mono-1024.png` | 1024×1024 | Monochrome |
-| `icon-mono-32.png` | 32×32 | Favicon |
-
-Located in [`assets/brand/app-icon/`](../assets/brand/app-icon/).
+Reference: [`assets/brand/brand-identity.png`](../assets/brand/brand-identity.png)
 
 ---
 
-## Usage Rules
+## Rules
 
 ### Do
 
 - Maintain clear space equal to X (crossbar height) on all sides.
-- Use provided SVG when possible (infinitely scalable).
+- Use provided SVG when possible.
 - Use monochrome variants on photography or busy backgrounds.
 - Use icon-only variant when space is constrained.
 
-### Do Not
+### Do not
 
 - Rotate the logo.
 - Stretch or distort proportions.
 - Change brand colors (e.g., orange).
-- Add drop shadows, glows, or effects to the logo.
-- Place the logo smaller than 16px (digital) or 12mm (print).
+- Add drop shadows, glows, or effects.
+- Place smaller than 16px (digital) or 12mm (print).
+
+---
+
+## Examples
+
+### Correct
+
+- `HavenLogo(height: 28)` in top bar with clear space
+- Primary SVG on light `surface` background
+
+### Incorrect
+
+- Logo at 12px height on mobile ❌
+- Orange-tinted H for seasonal campaign ❌
+- Drop shadow behind logo for "depth" ❌
+
+---
+
+## Accessibility
+
+- When logo is decorative alongside "Haven" wordmark elsewhere, mark SVG as decorative.
+- When logo is the only brand identifier, provide accessible name: "Haven".
+
+---
+
+## Future extensions
+
+- Wordmark lockup specifications (if separate from icon)
+- Co-branding rules
+- Print color profile documentation
+
+---
+
+## Validation notes
+
+- Logo exported from Figma and rendered via `flutter_svg`.
+- App icons generated via `flutter_launcher_icons`.
+- Construction grid validated against brand identity reference.
+
+---
+
+## Related
+
+- [HDL/07-color-system.md](07-color-system.md) — brand color tokens
+- [HDL/20-components.md](20-components.md) — HavenLogo component

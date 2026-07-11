@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 /// Haven motion tokens.
 ///
-/// Source of truth: HDL/12-motion.md
+/// Source of truth: HDL/12-motion.md (global) · HDL/13-financial-pulse.md (Pulse)
 abstract final class HavenMotion {
   // ── Idle breath ──────────────────────────────────────────────────
   static const Duration pulseIdleBreathDuration = Duration(milliseconds: 6000);
@@ -93,6 +93,22 @@ abstract final class HavenMotion {
   /// HavenHeroCard Pulse Line — hospital-monitor ECG sweep (PD-030).
   static const Duration pulseLineDuration = Duration(milliseconds: 1800);
   static const double pulseLineHeight = 56;
+
+  // ── Layer transition (PD-031) — content morph only; Pulse stays on pull ─
+  static const Duration layerBodyMorphDuration = Duration(milliseconds: 240);
+
+  /// @deprecated Layer nav no longer animates Pulse — kept for reference.
+  static const Duration layerTravelDuration = Duration(milliseconds: 450);
+
+  /// @deprecated
+  static Duration get layerHeartbeatDuration =>
+      pulseHeartbeatExpandDuration +
+      pulseHeartbeatContractDuration +
+      const Duration(milliseconds: 100);
+
+  static const Duration layerBodyFadeDuration = layerBodyMorphDuration;
+  static const double layerBodySlideOffset = 12;
+  static const Curve layerCurve = Curves.easeOutCubic;
 
   // ── Spring motion (connected, restrained) ────────────────────────
   static const SpringDescription pulseHeroSettleSpring = SpringDescription(

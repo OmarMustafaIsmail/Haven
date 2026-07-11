@@ -42,6 +42,11 @@ Every important discussion ends with a decision recorded here. Any new developer
 | PD-028 | FinancialPulse component architecture — event-driven, Home-agnostic | Locked |
 | PD-029 | Home v5 — Concept C soft-card layout + v4 Pulse integration | Locked |
 | PD-030 | Pulse Line — hospital ECG reading during Check-In | Locked |
+| PD-031 | Layered navigation — Pulse as transition camera | Locked |
+| PD-032 | Hero three-layer structure — Financial State, Safe to Spend, Today's Moment | Locked |
+| PD-033 | Five core primitives — Pulse, Moment, Money Place, Plan, Activity | Locked |
+| PD-034 | Moment primitive — generic engine, Hero, acknowledgement, Activity | Locked |
+| PD-035 | Money Place — manual source, CRUD, Connected future | Locked |
 
 ---
 
@@ -307,7 +312,7 @@ Reference: [HDL.md](HDL.md)
 
 **Date:** 2026-07-10
 
-Reference: [HAVEN_HOME_EXPERIENCE.md](HAVEN_HOME_EXPERIENCE.md)
+Reference: [PRODUCT_ARCHITECTURE.md](PRODUCT_ARCHITECTURE.md)
 
 ---
 
@@ -323,7 +328,7 @@ Reference: [HAVEN_HOME_EXPERIENCE.md](HAVEN_HOME_EXPERIENCE.md)
 
 **Date:** 2026-07-10
 
-Reference: [HAVEN_HOME_EXPERIENCE.md](HAVEN_HOME_EXPERIENCE.md)
+Reference: [PRODUCT_ARCHITECTURE.md](PRODUCT_ARCHITECTURE.md)
 
 ---
 
@@ -341,7 +346,7 @@ Reference: [HAVEN_HOME_EXPERIENCE.md](HAVEN_HOME_EXPERIENCE.md)
 
 **Date:** 2026-07-10
 
-Reference: [HAVEN_HOME_EXPERIENCE.md](HAVEN_HOME_EXPERIENCE.md)
+Reference: [PRODUCT_ARCHITECTURE.md](PRODUCT_ARCHITECTURE.md)
 
 ---
 
@@ -359,7 +364,7 @@ Reference: [HAVEN_HOME_EXPERIENCE.md](HAVEN_HOME_EXPERIENCE.md)
 
 **Date:** 2026-07-10
 
-Reference: [HAVEN_FINANCIAL_PULSE.md](HAVEN_FINANCIAL_PULSE.md)
+Reference: [HDL/13-financial-pulse.md](HDL/13-financial-pulse.md)
 
 ---
 
@@ -375,7 +380,7 @@ Reference: [HAVEN_FINANCIAL_PULSE.md](HAVEN_FINANCIAL_PULSE.md)
 
 **Date:** 2026-07-10
 
-Reference: [HAVEN_FINANCIAL_PULSE.md](HAVEN_FINANCIAL_PULSE.md), [HDL/13-financial-pulse.md](HDL/13-financial-pulse.md)
+Reference: [HDL/13-financial-pulse.md](HDL/13-financial-pulse.md), [HDL/13-financial-pulse.md](HDL/13-financial-pulse.md)
 
 ---
 
@@ -402,7 +407,7 @@ Reference: [HAVEN_FINANCIAL_PULSE.md](HAVEN_FINANCIAL_PULSE.md), [HDL/13-financi
 
 **Date:** 2026-07-10
 
-Reference: [HAVEN_HOME_EXPERIENCE.md](HAVEN_HOME_EXPERIENCE.md), [HAVEN_FINANCIAL_PULSE.md](HAVEN_FINANCIAL_PULSE.md)
+Reference: [PRODUCT_ARCHITECTURE.md](PRODUCT_ARCHITECTURE.md), [HDL/13-financial-pulse.md](HDL/13-financial-pulse.md)
 
 ---
 
@@ -410,7 +415,7 @@ Reference: [HAVEN_HOME_EXPERIENCE.md](HAVEN_HOME_EXPERIENCE.md), [HAVEN_FINANCIA
 
 **Decision:** Financial Check-In is implemented as an independent **`FinancialPulse`** component with strict boundaries: Pulse emits events, Home listens, animation drives interface — never the reverse.
 
-**Reason:** Enables days of ritual polish without rewriting Home. Home can iterate on content orchestration while Pulse iteration stays isolated. Architecture documented in [FINANCIAL_PULSE_ARCHITECTURE.md](FINANCIAL_PULSE_ARCHITECTURE.md).
+**Reason:** Enables days of ritual polish without rewriting Home. Home can iterate on content orchestration while Pulse iteration stays isolated. Architecture documented in [HDL/13-financial-pulse.md](HDL/13-financial-pulse.md).
 
 **Status:** Locked
 
@@ -420,7 +425,7 @@ Reference: [HAVEN_HOME_EXPERIENCE.md](HAVEN_HOME_EXPERIENCE.md), [HAVEN_FINANCIA
 
 **Date:** 2026-07-10
 
-Reference: [FINANCIAL_PULSE_ARCHITECTURE.md](FINANCIAL_PULSE_ARCHITECTURE.md), [HDL/20-components.md](HDL/20-components.md)
+Reference: [HDL/13-financial-pulse.md](HDL/13-financial-pulse.md), [HDL/20-components.md](HDL/20-components.md)
 
 ---
 
@@ -448,7 +453,7 @@ Reference: [FINANCIAL_PULSE_ARCHITECTURE.md](FINANCIAL_PULSE_ARCHITECTURE.md), [
 
 **Date:** 2026-07-10
 
-Reference: [HAVEN_HOME_EXPERIENCE.md](HAVEN_HOME_EXPERIENCE.md), [HDL/20-components.md](HDL/20-components.md)
+Reference: [PRODUCT_ARCHITECTURE.md](PRODUCT_ARCHITECTURE.md), [HDL/20-components.md](HDL/20-components.md)
 
 ---
 
@@ -474,8 +479,99 @@ Reference: [HAVEN_HOME_EXPERIENCE.md](HAVEN_HOME_EXPERIENCE.md), [HDL/20-compone
 
 **PD-030 refinement:** Pull draws Pulse toward center (grow + travel); hero card unchanged until Pulse arrives. Supersedes fixed-header-during-pull for Concept C Home.
 
-**Resolves:** Open question "Heartbeat during data latency" in [HAVEN_FINANCIAL_PULSE.md](HAVEN_FINANCIAL_PULSE.md).
+**Resolves:** Open question "Heartbeat during data latency" in [HDL/13-financial-pulse.md](HDL/13-financial-pulse.md).
 
 **Date:** 2026-07-10
 
-Reference: [HAVEN_FINANCIAL_PULSE.md](HAVEN_FINANCIAL_PULSE.md), [HDL/12-motion.md](HDL/12-motion.md), [HDL/13-financial-pulse.md](HDL/13-financial-pulse.md)
+Reference: [HDL/13-financial-pulse.md](HDL/13-financial-pulse.md), [HDL/12-motion.md](HDL/12-motion.md), [HDL/13-financial-pulse.md](HDL/13-financial-pulse.md)
+
+---
+
+# PD-031
+
+**Decision:** Home, Money, and Plans are **layers** of one continuous Haven experience — not separate screens. Navigation between layers uses **Pulse-anchored morph transitions**, not page pushes or tab switches.
+
+**Reason:** Members should feel they went **deeper** into Haven, not that they opened another app screen. The Pulse is the **transition camera** — it draws attention to center while content morphs underneath. This is distinct from Check-In, where Pulse performs a financial reading.
+
+**Status:** Locked
+
+**Rules:**
+
+1. **Persistent chrome** — Greeting, Pulse header, HavenHeroCard remain visible across Home and Money layers.
+2. **Morphing body only** — Home body (recommendation + activity) ↔ Money body (total, places, plans, movement).
+3. **Two Money entry points** — bottom nav and Safe to Spend chevron — **identical** transition.
+4. **Layer transition** — programmatic Pulse travel to center → single light heartbeat + haptic → body morph → Pulse returns to header. **No Pulse Line. No hero reading.**
+5. **Return Home** — reverse morph; member feels *"I zoomed back out."*
+6. **Never** — Material push, slide-left navigation, hard cuts, separate Scaffold for Money.
+7. **Mutually exclusive** — layer transition and Check-In cannot run simultaneously.
+
+**PD-010 amendment:** Five-tab bar remains but is reframed as **depth affordances**, not page routers.
+
+**Date:** 2026-07-11
+
+Reference: [PRODUCT_ARCHITECTURE.md](PRODUCT_ARCHITECTURE.md), [HDL/13-financial-pulse.md](HDL/13-financial-pulse.md), [HDL/12-motion.md](HDL/12-motion.md)
+
+---
+
+# PD-032
+
+**Decision:** HavenHeroCard is a **three-layer Hero** — one calm conversational component, not stacked dashboard widgets.
+
+**Reason:** The Hero must answer two distinct questions every time a member opens Haven: *"How am I doing?"* and *"Is there anything I should know today?"* Those must never replace each other.
+
+**Status:** Locked
+
+**Layers:**
+
+1. **Financial State** (persistent) — single line from `PulseState` only. Changes only when Pulse changes — never from reminders, events, or notifications.
+2. **Safe to Spend** (persistent) — visually dominant; never hidden, collapsed, or replaced.
+3. **Today's Moment** (dynamic) — max one relevant message; optional lightweight actions; section absent when no moment (no empty placeholder).
+
+**Rules:**
+
+- Whitespace separates layers — no excessive dividers, no notification styling.
+- Today's Moment is not a feed, alert center, or notification.
+- RecommendationCard on Home is **superseded** — guidance moves into Today's Moment when relevant.
+- Future: Today's Moment powered by Haven Intelligence; UI supports this without redesign.
+
+**Date:** 2026-07-11
+
+Reference: [PRODUCT_ARCHITECTURE.md](PRODUCT_ARCHITECTURE.md), [HDL/20-components.md](HDL/20-components.md)
+
+---
+
+# PD-033
+
+**Decision:** Haven is built from **five core primitives**: Pulse, Moment, Money Place, Plan, Activity.
+
+**Reason:** Without shared primitives, Haven becomes a collection of unrelated features. Every screen and interaction should compose from this vocabulary.
+
+**Status:** Locked
+
+**Date:** 2026-07-11
+
+Reference: [HAVEN_MANIFESTO.md](HAVEN_MANIFESTO.md), [PRODUCT_ARCHITECTURE.md](PRODUCT_ARCHITECTURE.md)
+
+---
+
+# PD-034
+
+**Decision:** **Moment** is a generic product primitive with a reusable engine. The Hero displays at most one active Moment.
+
+**Reason:** Flexible contextual communication — not one-off reminders or notification feeds.
+
+**Status:** Locked
+
+**Amends:** PD-032 Layer 3 — UI label "Today's Moment"; primitive is **Moment**.
+
+**Date:** 2026-07-11
+
+---
+
+# PD-035
+
+**Decision:** **Money Place** supports manual CRUD with `source: Manual`; `Connected` reserved for future bank links.
+
+**Status:** Locked
+
+**Date:** 2026-07-11

@@ -1,61 +1,46 @@
 # HDL 07 — Color System
 
-## Purpose
+**Status:** EXPERIMENTAL
 
-The Haven color specification — brand, semantic, and Financial Pulse colors.
-
-## Status
-
-**EXPERIMENTAL**
-
-## Reasoning
-
-Colors were sampled from brand assets and Concept C home direction. They are in use on the Home screen but have not been validated across multiple member flows or screen types.
-
-## Validation notes
-
-- Validated on Home mock v1 and Home Experience v2.
-- WCAG contrast ratios calculated for light palette pairs.
-- Not yet tested on Money, Plans, Insights, or Profile screens.
-- Dark mode tokens are exploratory only — not validated.
-
-## Implementation notes
-
-**Flutter tokens:** [`lib/theme/haven_colors.dart`](../lib/theme/haven_colors.dart)
+**Implementation:** [`lib/theme/haven_colors.dart`](../lib/theme/haven_colors.dart)
 
 ---
 
-## Philosophy
+## Purpose
 
-Color in Haven communicates meaning, never decoration.
+The Haven color specification — brand, semantic, and Pulse wellbeing colors. Defines every color token and when to use it.
 
-Every color should help members understand their financial state with confidence.
+Pulse **behaviour** and interaction colors in context: [HDL/13-financial-pulse.md](13-financial-pulse.md).
+
+---
+
+## Principles
+
+Color communicates meaning, never decoration.
 
 - Brand colors create trust.
 - Semantic colors create clarity.
 - Whitespace creates calm.
+- Never rely on color alone — pair with text or iconography.
+- Avoid bright saturated palettes, unnecessary gradients, and decorative accents.
 
-The interface should never rely on color alone to communicate information.
+### Color hierarchy
 
-Avoid bright saturated palettes, unnecessary gradients, and decorative accents.
+Stronger color only as interaction importance increases:
 
----
-
-## Color Hierarchy
-
-Color should become progressively stronger only as interaction importance increases.
-
-1. **Background** — the calmest layer; the app shell
-2. **Surface** — cards and containers that hold content
-3. **Primary Content** — headings, amounts, essential text
-4. **Secondary Content** — labels, supporting text, metadata
-5. **Brand Accent** — primary teal; reserved for identity and key actions
-6. **Semantic Status** — Good, Attention, Action; financial state communication
-7. **Interactive** — tappable, in-progress, highlighted elements
+1. **Background** — calmest layer; app shell
+2. **Surface** — cards and containers
+3. **Primary content** — headings, amounts
+4. **Secondary content** — labels, metadata
+5. **Brand accent** — primary teal; identity and key actions
+6. **Semantic status** — Good, Attention, Action
+7. **Interactive** — tappable, in-progress elements
 
 ---
 
-## Brand Colors
+## Tokens
+
+### Brand colors
 
 Extracted from [`assets/brand/brand-identity.png`](../assets/brand/brand-identity.png). Primary teal averaged at `#1D544E`.
 
@@ -134,96 +119,47 @@ For status cards and pills. Tinted, not saturated.
 
 ---
 
-## Financial Pulse Colors
+### Financial Pulse colors
 
-The Financial Pulse is wellbeing, not a score. Colors express calm states — never gamified reds/greens.
+Wellbeing states — not gamified reds/greens. Usage rules: [HDL/13-financial-pulse.md](13-financial-pulse.md).
 
-| Token | Hex | State | Usage |
-|---|---|---|---|
-| `HavenColors.pulseCalm` | `#4A9B6E` | Steady | Default wellbeing — all is well |
-| `HavenColors.pulseStrong` | `#1D544E` | Strong | Confident financial position |
-| `HavenColors.pulseAttention` | `#C4862B` | Needs awareness | Gentle nudge, not warning |
-| `HavenColors.pulseReveal` | `#E8F2F0` | Pull reveal | Pull to Check Your Financial Pulse background |
-| `HavenColors.pulseRevealAccent` | `#1D544E` | Pull reveal | Pulse indicator during pull-down |
-
-### Pulse Gradient (Pull Interaction)
-
-For the Pull to Check Your Financial Pulse™ reveal:
-
-```
-Top:    #E8F2F0 (pulseReveal)
-Bottom: #FFFFFF (surface)
-```
-
----
-
-## Accessibility — Contrast Ratios
-
-All pairs tested against WCAG 2.1 AA (4.5:1 normal text, 3:1 large text).
-
-| Foreground | Background | Ratio | Pass |
-|---|---|---|---|
-| `textPrimary` `#1A1A1C` | `background` `#FAFBFC` | 16.8:1 | AA ✓ |
-| `textPrimary` `#1A1A1C` | `surface` `#FFFFFF` | 17.4:1 | AA ✓ |
-| `textSecondary` `#5A6167` | `background` `#FAFBFC` | 6.2:1 | AA ✓ |
-| `textSecondary` `#5A6167` | `surface` `#FFFFFF` | 6.4:1 | AA ✓ |
-| `textTertiary` `#8E9499` | `surface` `#FFFFFF` | 3.5:1 | AA large ✓ |
-| `primary` `#1D544E` | `surface` `#FFFFFF` | 8.6:1 | AA ✓ |
-| `primary` `#1D544E` | `background` `#FAFBFC` | 8.3:1 | AA ✓ |
-| `statusGood` `#4A9B6E` | `statusGoodBg` `#EDF7F0` | 4.6:1 | AA ✓ |
-| `statusAttention` `#C4862B` | `statusAttentionBg` `#FBF5EC` | 4.5:1 | AA ✓ |
-| `statusAction` `#C44D4D` | `statusActionBg` `#FBEFEF` | 4.7:1 | AA ✓ |
-| `#FFFFFF` | `primaryDark` `#143D39` | 11.2:1 | AA ✓ |
-| `darkTextPrimary` `#F5F5F7` | `darkBackground` `#0F1419` | 17.1:1 | AA ✓ |
-| `darkPrimary` `#2A7A6E` | `darkSurface` `#1A1F24` | 5.8:1 | AA ✓ |
-
----
-
-## Flutter Tokens
-
-Implementation in [`lib/theme/haven_colors.dart`](../lib/theme/haven_colors.dart).
-
-```dart
-// Usage — never hardcode hex in widgets
-Container(color: HavenColors.surface)
-Text('42,350 EGP', style: TextStyle(color: HavenColors.textPrimary))
-```
-
----
-
-## Figma Variables
-
-Create a **HavenColors** collection. Variable names must match Flutter tokens exactly.
-
-| Figma Variable | Value | Type |
+| Token | Hex | State |
 |---|---|---|
-| `HavenColors/primary` | `#1D544E` | Color |
-| `HavenColors/primaryDark` | `#143D39` | Color |
-| `HavenColors/primaryLight` | `#E8F2F0` | Color |
-| `HavenColors/primaryMuted` | `#A5C2C0` | Color |
-| `HavenColors/background` | `#FAFBFC` | Color |
-| `HavenColors/surface` | `#FFFFFF` | Color |
-| `HavenColors/surfaceElevated` | `#FDFCF8` | Color |
-| `HavenColors/textPrimary` | `#1A1A1C` | Color |
-| `HavenColors/textSecondary` | `#5A6167` | Color |
-| `HavenColors/textTertiary` | `#8E9499` | Color |
-| `HavenColors/border` | `#E8EAED` | Color |
-| `HavenColors/statusGood` | `#4A9B6E` | Color |
-| `HavenColors/statusAttention` | `#C4862B` | Color |
-| `HavenColors/statusAction` | `#C44D4D` | Color |
-| `HavenColors/statusInteractive` | `#4A8F88` | Color |
-| `HavenColors/pulseCalm` | `#4A9B6E` | Color |
-| `HavenColors/pulseStrong` | `#1D544E` | Color |
-| `HavenColors/pulseAttention` | `#C4862B` | Color |
-| `HavenColors/pulseReveal` | `#E8F2F0` | Color |
+| `HavenColors.pulseCalm` | `#4A9B6E` | Steady |
+| `HavenColors.pulseStrong` | `#1D544E` | Strong |
+| `HavenColors.pulseAttention` | `#C4862B` | Needs awareness |
+| `HavenColors.pulseReveal` | `#E8F2F0` | Pull reveal background |
+| `HavenColors.pulseRevealAccent` | `#1D544E` | Pulse during pull |
 
-Dark mode variables will be added when the Future Dark Theme is designed.
+Pull reveal gradient: `pulseReveal` → `surface`.
 
 ---
 
-## Usage Examples
+## Rules
 
-### Status Card (Concept C)
+### Do
+
+- Use `HavenColors` tokens everywhere — no hardcoded hex in widgets.
+- Use semantic backgrounds (`statusGoodBg`) behind semantic foregrounds (`statusGood`).
+- Use warm off-whites for app shell — `#FAFBFC`, not pure white.
+- Use `primaryMuted` for decorative accents, not `primary` at reduced opacity.
+- Test new pairs against WCAG AA before locking.
+- Keep Pulse colors calm — wellbeing, not gamification.
+
+### Do not
+
+- Use neon or saturated accent colors.
+- Use pure alarm red (`#FF0000`) — use `statusAction` (`#C44D4D`).
+- Use orange for brand elements.
+- Use generic Material blue for interactive states.
+- Apply drop shadows or glows to the logo.
+- Use traffic-light semantics without the four-state system.
+
+---
+
+## Examples
+
+### Status card (Concept C)
 
 ```
 Background:  statusGoodBg (#EDF7F0)
@@ -232,7 +168,7 @@ Text:        textPrimary (#1A1A1C)
 Message:     "You're doing great! Nothing needs your attention right now."
 ```
 
-### Safe to Spend Hero
+### Safe to Spend hero
 
 ```
 Background:  surface (#FFFFFF)
@@ -240,24 +176,16 @@ Label:       textSecondary (#5A6167) — "Safe to spend"
 Amount:      textPrimary (#1A1A1C) — "42,350 EGP"
 ```
 
-### Recommendation Card
+### Recommendation card
 
 ```
 Background:  surfaceElevated (#FDFCF8)
 Title:       textPrimary (#1A1A1C) — "Recommended for you"
 Body:        textSecondary (#5A6167)
-Action:      primary (#1D544E) — chevron, link
+Action:      primary (#1D544E)
 ```
 
-### Interactive Element
-
-```
-Background:  statusInteractiveBg (#E8F4F2)
-Indicator:   statusInteractive (#4A8F88) — in-progress, highlighted
-Text:        textPrimary (#1A1A1C)
-```
-
-### Bottom Navigation
+### Bottom navigation
 
 ```
 Background:  surface (#FFFFFF)
@@ -266,34 +194,52 @@ Inactive:    textTertiary (#8E9499)
 Border top:  borderSubtle (#F0F1F3)
 ```
 
-### Financial Pulse Pull Reveal
+### Financial Pulse pull reveal
 
 ```
 Background gradient: pulseReveal → surface
-Pulse indicator:     pulseRevealAccent (#1D544E)
-State calm:          pulseCalm (#4A9B6E)
+Pulse indicator:     pulseRevealAccent
+State calm:          pulseCalm
 ```
 
 ---
 
-## Do
+## Accessibility
 
-- Use `HavenColors` tokens everywhere — no hardcoded hex in widgets.
-- Use semantic backgrounds (`statusGoodBg`) behind semantic foregrounds (`statusGood`).
-- Use warm off-whites for backgrounds — `#FAFBFC`, not `#FFFFFF` for the app shell.
-- Use `primaryMuted` for decorative accents, not `primary` at reduced opacity.
-- Test new color pairs against WCAG AA before locking.
-- Keep Financial Pulse colors calm — wellbeing, not gamification.
-- Follow the color hierarchy — stronger color only as importance increases.
+Contrast ratios tested against WCAG 2.1 AA (4.5:1 normal text, 3:1 large text).
 
-## Do Not
+| Foreground | Background | Ratio | Pass |
+|---|---|---|---|
+| `textPrimary` | `background` | 16.8:1 | AA ✓ |
+| `textPrimary` | `surface` | 17.4:1 | AA ✓ |
+| `textSecondary` | `background` | 6.2:1 | AA ✓ |
+| `textSecondary` | `surface` | 6.4:1 | AA ✓ |
+| `textTertiary` | `surface` | 3.5:1 | AA large ✓ |
+| `primary` | `surface` | 8.6:1 | AA ✓ |
+| `statusGood` | `statusGoodBg` | 4.6:1 | AA ✓ |
+| `statusAttention` | `statusAttentionBg` | 4.5:1 | AA ✓ |
+| `statusAction` | `statusActionBg` | 4.7:1 | AA ✓ |
 
-- Use neon or saturated accent colors.
-- Use pure alarm red (`#FF0000`) for status — use `statusAction` (`#C44D4D`).
-- Use orange for brand elements (off-brand per logo rules).
-- Use generic Material blue for interactive states.
-- Apply drop shadows or glows to the logo.
-- Use `primary` on `primaryLight` without checking contrast.
-- Hardcode colors in components — always reference tokens.
-- Use traffic-light semantics without the four-state system (Good, Attention, Action, Interactive).
-- Mark the color system as locked before real screens validate the palette.
+Never communicate status through color alone — always pair with text.
+
+---
+
+## Future extensions
+
+- Dark theme palette (placeholder tokens exist — not approved for implementation)
+- Figma `HavenColors` variable collection synced to Flutter tokens
+- Validation across Money, Plans, Insights, Profile before locking
+
+---
+
+## Validation notes
+
+- Validated on Home mock v1 and Home Experience v2.
+- Not yet tested on other primary tabs.
+
+---
+
+## Related
+
+- [HDL/13-financial-pulse.md](13-financial-pulse.md) — Pulse color usage in Check-In
+- [HDL/20-components.md](20-components.md) — component color usage

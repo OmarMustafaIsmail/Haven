@@ -91,7 +91,7 @@ Members do not refresh data. They **check in**.
 
 The Pulse communicates state through feeling, color, and motion — never through numbers alone.
 
-Full specification: [HAVEN_FINANCIAL_PULSE.md](HAVEN_FINANCIAL_PULSE.md)
+Implementation: [HDL/13-financial-pulse.md](HDL/13-financial-pulse.md)
 
 ---
 
@@ -202,6 +202,18 @@ It is not an expense tracker. It is not a budgeting app. It is not a banking app
 
 It is where financial confidence lives.
 
+### Core Primitives
+
+Everything in Haven is built from five first-class concepts:
+
+- **Pulse** — financial wellbeing
+- **Moment** — the single most important thing Haven wants to communicate today
+- **Money Place** — where money currently lives
+- **Plan** — what the money is working toward
+- **Activity** — a historical record of financial events and member interactions
+
+Features compose from these primitives. Haven grows as a coherent system — not a collection of unrelated reminders and widgets.
+
 ---
 
 ## If Haven Disappeared Tomorrow
@@ -220,8 +232,6 @@ That is why every person who works on Haven should read this before they write a
 
 ## Related Documents
 
-- [HAVEN_HOME_EXPERIENCE.md](HAVEN_HOME_EXPERIENCE.md) — the emotional experience of opening Haven
-- [HAVEN_FINANCIAL_PULSE.md](HAVEN_FINANCIAL_PULSE.md) — signature interaction specification
-- [HAVEN_ARCHITECTURE.md](HAVEN_ARCHITECTURE.md) — engineering architecture
-- [HDL.md](HDL.md) — Haven Design Language (discovered while building)
+- [PRODUCT_ARCHITECTURE.md](PRODUCT_ARCHITECTURE.md) — how Haven is designed
+- [HDL.md](HDL.md) — UI implementation (Haven Design Language)
 - [PRODUCT_DECISIONS.md](PRODUCT_DECISIONS.md) — locked decisions with rationale

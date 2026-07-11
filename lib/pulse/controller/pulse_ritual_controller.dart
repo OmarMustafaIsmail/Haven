@@ -26,6 +26,13 @@ class PulseRitualController {
       phase == PulseRitualPhase.heartbeat ||
       phase == PulseRitualPhase.returningToHeader;
 
+  bool get isLayerTransitionActive =>
+      phase == PulseRitualPhase.layerTravelToCenter ||
+      phase == PulseRitualPhase.layerHeartbeat ||
+      phase == PulseRitualPhase.layerReturnToHeader;
+
+  double layerTravelProgress = 0;
+
   void beginSettleToHeader() {
     if (phase != PulseRitualPhase.heroPresentation) return;
     phase = PulseRitualPhase.settlingToHeader;
@@ -85,5 +92,33 @@ class PulseRitualController {
       pullOffset = 0;
       phase = PulseRitualPhase.headerRest;
     }
+  }
+
+  void beginLayerTransition() {
+    if (isRitualActive || isLayerTransitionActive) return;
+    phase = PulseRitualPhase.layerTravelToCenter;
+    layerTravelProgress = 0;
+  }
+
+  void updateLayerTravel(double progress) {
+    if (phase != PulseRitualPhase.layerTravelToCenter) return;
+    layerTravelProgress = progress.clamp(0.0, 1.0);
+  }
+
+  void completeLayerTravel() {
+    if (phase != PulseRitualPhase.layerTravelToCenter) return;
+    layerTravelProgress = 1;
+    phase = PulseRitualPhase.layerHeartbeat;
+  }
+
+  void completeLayerHeartbeat() {
+    if (phase != PulseRitualPhase.layerHeartbeat) return;
+    phase = PulseRitualPhase.layerReturnToHeader;
+  }
+
+  void completeLayerReturn() {
+    if (phase != PulseRitualPhase.layerReturnToHeader) return;
+    layerTravelProgress = 0;
+    phase = PulseRitualPhase.headerRest;
   }
 }

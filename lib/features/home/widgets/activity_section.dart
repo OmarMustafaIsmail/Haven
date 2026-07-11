@@ -5,9 +5,9 @@ import '../../../theme/haven_radius.dart';
 import '../../../theme/haven_spacing.dart';
 import '../../../theme/haven_typography.dart';
 import '../../../widgets/haven_card.dart';
-import '../models/home_data.dart';
+import '../../activity/models/activity_item.dart';
 
-/// Concept C recent activity — quiet context at the bottom of Home.
+/// Recent activity — transactions and member interactions (PD-033).
 class ActivitySection extends StatelessWidget {
   const ActivitySection({
     super.key,
@@ -76,23 +76,27 @@ class _ActivityRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isTransaction = activity.kind == ActivityKind.transaction;
+
     return Row(
       children: [
-        DecoratedBox(
-          decoration: BoxDecoration(
-            color: activity.iconBackgroundColor ?? HavenColors.statusAttentionBg,
-            borderRadius: BorderRadius.circular(HavenRadius.sm),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(10),
-            child: Icon(
-              activity.icon,
-              size: 20,
-              color: HavenColors.textPrimary,
+        if (activity.icon != null)
+          DecoratedBox(
+            decoration: BoxDecoration(
+              color:
+                  activity.iconBackgroundColor ?? HavenColors.statusAttentionBg,
+              borderRadius: BorderRadius.circular(HavenRadius.sm),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(10),
+              child: Icon(
+                activity.icon,
+                size: 20,
+                color: HavenColors.textPrimary,
+              ),
             ),
           ),
-        ),
-        const SizedBox(width: HavenSpacing.md),
+        if (activity.icon != null) const SizedBox(width: HavenSpacing.md),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -115,13 +119,14 @@ class _ActivityRow extends StatelessWidget {
             ],
           ),
         ),
-        Text(
-          HavenTypography.formatSignedAmount(activity.amount),
-          style: HavenTypography.body.copyWith(
-            fontWeight: FontWeight.w600,
-            color: HavenColors.textPrimary,
+        if (isTransaction && activity.amount != null)
+          Text(
+            HavenTypography.formatSignedAmount(activity.amount!),
+            style: HavenTypography.body.copyWith(
+              fontWeight: FontWeight.w600,
+              color: HavenColors.textPrimary,
+            ),
           ),
-        ),
       ],
     );
   }
