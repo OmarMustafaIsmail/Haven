@@ -7,7 +7,6 @@ import '../../activity/repository/activity_repository.dart';
 import '../../home/widgets/activity_section.dart';
 import '../../money/cubit/money_cubit.dart';
 import '../../money/cubit/money_state.dart';
-import '../../money/models/mock_money_data.dart';
 import '../../money/models/money_place.dart';
 import '../../money/widgets/connected_plans_section.dart';
 import '../../money/widgets/money_hero.dart';
@@ -110,7 +109,7 @@ class _MoneyBody extends StatelessWidget {
         final plansState = context.watch<PlansCubit>().state;
         final connectedNames = plansState is PlansLoadedState
             ? plansState.active.map((p) => p.name).toList()
-            : MockMoneyData.plans.map((p) => p.name).toList();
+            : <String>[];
 
         return Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -133,7 +132,7 @@ class _MoneyBody extends StatelessWidget {
             ),
             const SizedBox(height: HavenSpacing.xxl),
             const RecentMovementSection(
-              movements: MockMoneyData.movements,
+              movements: [],
             ),
           ],
         );
