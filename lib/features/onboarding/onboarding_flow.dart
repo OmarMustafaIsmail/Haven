@@ -105,7 +105,8 @@ class _OnboardingFlowState extends State<OnboardingFlow> {
       widget.plans.add(
         name: goalName,
         targetAmount: goalAmount,
-        connectedPlaceId: place?.id,
+        targetDate: widget.now.add(const Duration(days: 365)),
+        connectedPlaceIds: place == null ? const [] : [place.id],
         connectedPlaceName: place?.name,
       );
     }

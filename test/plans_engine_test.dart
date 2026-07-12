@@ -21,7 +21,11 @@ void main() {
       final activity = ActivityRepository();
       final repo = PlanRepository(activityRepository: activity);
 
-      repo.add(name: 'Car Fund', targetAmount: 200000);
+      repo.add(
+        name: 'Car Fund',
+        targetAmount: 200000,
+        targetDate: DateTime(2027, 1, 1),
+      );
 
       expect(repo.active.any((p) => p.name == 'Car Fund'), isTrue);
       expect(repo.recentActivity.first.label, 'Created Car Fund');
@@ -45,7 +49,11 @@ void main() {
   group('PlansCubit', () {
     test('createPlan updates loaded state', () {
       final cubit = PlansCubit(repository: PlanRepository());
-      cubit.createPlan(name: 'Studio', targetAmount: 100000);
+      cubit.createPlan(
+        name: 'Studio',
+        targetAmount: 100000,
+        targetDate: DateTime(2027, 6, 1),
+      );
 
       final state = cubit.state as PlansLoadedState;
       expect(state.active.any((p) => p.name == 'Studio'), isTrue);

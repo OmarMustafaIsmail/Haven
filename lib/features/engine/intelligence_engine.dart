@@ -1,5 +1,6 @@
 import '../commitments/models/commitment.dart';
 import '../moments/models/moment.dart';
+import '../money/models/money_place.dart';
 import '../plans/models/plan.dart';
 import 'safe_to_spend.dart';
 
@@ -11,6 +12,7 @@ abstract final class IntelligenceEngine {
     required List<Commitment> commitments,
     required List<Plan> plans,
     required DateTime now,
+    List<MoneyPlace> places = const [],
     Set<String> suppressedIds = const {},
     Duration momentExpiry = const Duration(days: 1),
   }) {
@@ -90,7 +92,7 @@ abstract final class IntelligenceEngine {
     for (final plan in plans.where((p) => p.status == PlanStatus.active)) {
       if (suppressedIds.contains('obs_plan_${plan.id}')) continue;
 
-      final band = PlanConfidence.band(plan, now: now);
+      final band = PlanConfidence.band(plan, now: now, places: places);
       if (band == PlanConfidenceBand.atRisk) {
         candidates.add(
           Moment(
@@ -118,7 +120,10 @@ abstract final class IntelligenceEngine {
         );
       }
 
-      if (plan.progress >= 0.5 && plan.progress < 0.55) {
+      final progress = places.isEmpty
+          ? plan.progress
+          : plan.effectiveProgress(places);
+      if (progress >= 0.5 && progress < 0.55) {
         candidates.add(
           Moment(
             id: 'obs_plan_${plan.id}_half',

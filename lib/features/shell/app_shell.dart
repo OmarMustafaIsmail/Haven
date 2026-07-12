@@ -452,7 +452,10 @@ class _AppShellState extends State<AppShell> {
           create: (_) => MoneyCubit(repository: s.moneyPlaceRepository),
         ),
         BlocProvider(
-          create: (_) => PlansCubit(repository: s.planRepository),
+          create: (_) => PlansCubit(
+            repository: s.planRepository,
+            moneyPlaces: s.moneyPlaceRepository,
+          ),
         ),
       ],
       child: DeveloperScope(

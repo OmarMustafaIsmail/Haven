@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../theme/haven_colors.dart';
 import '../../../theme/haven_radius.dart';
 import '../../../theme/haven_spacing.dart';
 import '../../../theme/haven_typography.dart';
 import '../../../widgets/haven_card.dart';
+import '../../developer/developer_scope.dart';
+import '../../engine/safe_to_spend.dart';
+import '../../money/cubit/money_cubit.dart';
+import '../../money/cubit/money_state.dart';
+import '../../money/models/money_place.dart';
 import '../models/plan.dart';
 
 /// Opening continuity for the Plans layer (PD-036).
@@ -126,6 +132,14 @@ class PlanRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final accent = plan.color ?? HavenColors.primary;
+    final moneyState = context.watch<MoneyCubit>().state;
+    final places =
+        moneyState is MoneyLoadedState ? moneyState.places : <MoneyPlace>[];
+    final now = DeveloperScope.maybeOf(context)?.services.clock.now() ??
+        DateTime.now();
+    final effective = plan.effectiveAllocated(places);
+    final progress = plan.effectiveProgress(places);
+    final band = PlanConfidence.band(plan, now: now, places: places);
 
     return HavenCard(
       margin: EdgeInsets.zero,
@@ -161,7 +175,7 @@ class PlanRow extends StatelessWidget {
                     Text(
                       plan.status == PlanStatus.suggested
                           ? 'Suggested · ${HavenTypography.formatAmount(plan.targetAmount)}'
-                          : '${HavenTypography.formatAmount(plan.allocatedAmount)} of ${HavenTypography.formatAmount(plan.targetAmount)}',
+                          : '${HavenTypography.formatAmount(effective)} of ${HavenTypography.formatAmount(plan.targetAmount)} · ${band.memberLabel}',
                       style: HavenTypography.caption.copyWith(
                         color: HavenColors.textTertiary,
                       ),
@@ -189,7 +203,7 @@ class PlanRow extends StatelessWidget {
             ClipRRect(
               borderRadius: BorderRadius.circular(HavenRadius.full),
               child: LinearProgressIndicator(
-                value: plan.progress,
+                value: progress,
                 minHeight: 4,
                 backgroundColor: HavenColors.borderSubtle,
                 color: accent,

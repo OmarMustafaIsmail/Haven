@@ -130,6 +130,7 @@ class HavenEngine {
     final observed = IntelligenceEngine.observe(
       commitments: _commitments.items,
       plans: _plans.plans,
+      places: _moneyPlaces.places,
       now: now,
       suppressedIds: _memorySuppressed,
       momentExpiry: _devTime.momentExpiryFor(now),

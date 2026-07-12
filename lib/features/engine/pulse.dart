@@ -30,7 +30,9 @@ abstract final class PulseCalculator {
 
     final atRiskPlans = activePlans
         .where(
-          (p) => PlanConfidence.band(p, now: now) == PlanConfidenceBand.atRisk,
+          (p) =>
+              PlanConfidence.band(p, now: now, places: places) ==
+              PlanConfidenceBand.atRisk,
         )
         .length;
 

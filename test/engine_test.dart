@@ -85,6 +85,7 @@ void main() {
             targetAmount: 100000,
             allocatedAmount: 10000,
             status: PlanStatus.active,
+            createdAt: now.subtract(const Duration(days: 30)),
             targetDate: now.add(const Duration(days: 365)),
           ),
         ],
@@ -214,6 +215,81 @@ void main() {
 
       expect(engine.safeToSpend.value.amount ?? 0, greaterThan(before));
       expect(engine.pulse.value, isNotNull);
+
+      engine.dispose();
+    });
+
+    test('place balance change ripples through allocation, confidence, STS', () {
+      final money = MoneyPlaceRepository(seedMock: false);
+      final commitments = CommitmentRepository(seedMock: false);
+      final plans = PlanRepository(seedMock: false);
+      final moments = MomentRepository();
+
+      money.add(name: 'Savings', balance: 5000);
+      final placeId = money.places.first.id;
+
+      commitments.add(
+        Commitment(
+          id: 'salary',
+          name: 'Salary',
+          direction: CommitmentDirection.inflow,
+          amount: 20000,
+          cadence: CommitmentCadence.monthly,
+          nextDate: now,
+        ),
+      );
+      commitments.add(
+        Commitment(
+          id: 'rent',
+          name: 'Rent',
+          direction: CommitmentDirection.outflow,
+          amount: 5000,
+          cadence: CommitmentCadence.monthly,
+          nextDate: now.add(const Duration(days: 2)),
+        ),
+      );
+
+      plans.add(
+        name: 'Trip',
+        targetAmount: 20000,
+        targetDate: now.add(const Duration(days: 50)),
+        createdAt: now.subtract(const Duration(days: 50)),
+        connectedPlaceIds: [placeId],
+        connectedPlaceName: 'Savings',
+        allocatedAmount: 10000,
+      );
+
+      final plan = plans.active.first;
+      expect(plan.effectiveAllocated(money.places), 5000);
+      expect(
+        PlanConfidence.band(plan, now: now, places: money.places),
+        PlanConfidenceBand.atRisk,
+      );
+
+      final engine = HavenEngine(
+        moneyPlaces: money,
+        commitments: commitments,
+        plans: plans,
+        moments: moments,
+        now: now,
+      );
+
+      final stsBefore = engine.safeToSpend.value;
+      expect(stsBefore.state, SafeToSpendState.confident);
+      expect(stsBefore.breakdown.planIntentionHold, greaterThan(0));
+
+      money.updateBalance(id: placeId, balance: 10000);
+
+      final refreshed = plans.active.first;
+      expect(refreshed.effectiveAllocated(money.places), 10000);
+      expect(
+        PlanConfidence.band(refreshed, now: now, places: money.places),
+        PlanConfidenceBand.onTrack,
+      );
+      expect(
+        engine.safeToSpend.value.breakdown.planIntentionHold,
+        lessThan(stsBefore.breakdown.planIntentionHold),
+      );
 
       engine.dispose();
     });

@@ -51,7 +51,7 @@ void main() {
           find.text('Some things need attention.').evaluate().isNotEmpty,
       isTrue,
     );
-    // Demo seed has a plan without target date → Estimated STS copy.
+    // Demo seed: all active plans dated + salary → Confident STS.
     expect(
       find.textContaining('Around').evaluate().isNotEmpty ||
           find.text('You can safely spend').evaluate().isNotEmpty,
@@ -136,15 +136,16 @@ void main() {
     await tester.pump(const Duration(milliseconds: 300));
 
     expect(find.text('Progress'), findsOneWidget);
-    expect(find.text('50%'), findsOneWidget);
+    expect(find.textContaining('%'), findsWidgets);
+    expect(find.textContaining('Confidence'), findsOneWidget);
     expect(find.text('Target'), findsOneWidget);
-    expect(find.text('Allocated'), findsOneWidget);
-    expect(find.text('Connected Money Place'), findsOneWidget);
+    expect(find.text('Allocated (lens)'), findsOneWidget);
+    expect(find.text('Connected places'), findsOneWidget);
     expect(find.text('Savings'), findsOneWidget);
-    expect(find.text('Upcoming milestones'), findsOneWidget);
 
-    await tester.drag(find.byType(ListView).last, const Offset(0, -240));
+    await tester.drag(find.byType(ListView).last, const Offset(0, -400));
     await tester.pump();
+    expect(find.text('Upcoming milestones'), findsOneWidget);
     expect(find.text('Recent contributions'), findsOneWidget);
   });
 

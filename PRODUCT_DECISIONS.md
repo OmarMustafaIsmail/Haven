@@ -50,6 +50,7 @@ Every important discussion ends with a decision recorded here. Any new developer
 | PD-036 | Plans layer — intent, create/detail, layered navigation | Locked |
 | PD-037 | Haven-native form primitives — sheets, fields, selects | Locked |
 | PD-038 | Safe to Spend confidence states — Confident / Estimated / Unknown | Locked |
+| PD-039 | Plan target date mandatory + allocation as member-owned lens | Locked |
 
 ---
 
@@ -645,3 +646,25 @@ Reference: [HDL/10-radius.md](HDL/10-radius.md), [HDL/12-motion.md](HDL/12-motio
 **Date:** 2026-07-12
 
 Reference: [HAVEN_ENGINE.md](HAVEN_ENGINE.md), [lib/features/engine/safe_to_spend.dart](lib/features/engine/safe_to_spend.dart)
+
+---
+
+# PD-039
+
+**Decision:** Active Plans require a target date. Plan allocation is a member-owned **lens** over connected Money Places — money never leaves places. Plan Confidence is shown as High / Medium / Low.
+
+**Reason:** Undated plans make Safe to Spend and pace confidence guesswork. Allocation-as-transfer would invent money movement Haven does not perform. A lens (`effectiveAllocated = min(allocatedAmount, sum(connected balances))`) keeps Places as the source of truth while letting members express intention.
+
+**Status:** Locked
+
+**Rules:**
+
+1. Create / activate flows require a target date for active plans.
+2. Members set `allocatedAmount` and one-or-more `connectedPlaceIds`. Effective allocation and progress use live place balances.
+3. Changing a place balance immediately changes effective progress → confidence → STS → Pulse → Moments.
+4. Confidence pace uses `plan.createdAt` (not a fake start). UI labels: High / Medium / Low for onTrack / tight / atRisk.
+5. Supersedes PD-036 rule that target date was optional at create.
+
+**Date:** 2026-07-12
+
+Reference: [HAVEN_ENGINE.md](HAVEN_ENGINE.md), [lib/features/plans/models/plan.dart](lib/features/plans/models/plan.dart)

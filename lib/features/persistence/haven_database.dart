@@ -21,7 +21,7 @@ class HavenDatabase {
   bool get isOpen => _db != null;
 
   static const _dbName = 'haven_v0.db';
-  static const _version = 1;
+  static const _version = 2;
 
   Future<void> open() async {
     if (_db != null) return;
@@ -31,6 +31,7 @@ class HavenDatabase {
       path,
       version: _version,
       onCreate: _onCreate,
+      onUpgrade: _onUpgrade,
     );
   }
 
@@ -41,7 +42,40 @@ class HavenDatabase {
       inMemoryDatabasePath,
       version: _version,
       onCreate: _onCreate,
+      onUpgrade: _onUpgrade,
     );
+  }
+
+  Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
+    if (oldVersion < 2) {
+      await db.execute(
+        'ALTER TABLE plans ADD COLUMN created_at INTEGER',
+      );
+      await db.execute(
+        "ALTER TABLE plans ADD COLUMN priority TEXT NOT NULL DEFAULT 'important'",
+      );
+      await db.execute('ALTER TABLE plans ADD COLUMN notes TEXT');
+      await db.execute('ALTER TABLE plans ADD COLUMN connected_place_ids TEXT');
+      // Migrate legacy single place id → JSON list; stamp created_at.
+      final rows = await db.query('plans');
+      for (final row in rows) {
+        final legacyId = row['connected_place_id'] as String?;
+        final idsJson = legacyId == null || legacyId.isEmpty
+            ? '[]'
+            : '["$legacyId"]';
+        await db.update(
+          'plans',
+          {
+            'connected_place_ids': idsJson,
+            'created_at': row['created_at'] ??
+                DateTime.now().millisecondsSinceEpoch,
+            'priority': row['priority'] ?? 'important',
+          },
+          where: 'id = ?',
+          whereArgs: [row['id']],
+        );
+      }
+    }
   }
 
   Future<void> _onCreate(Database db, int version) async {
@@ -72,9 +106,13 @@ class HavenDatabase {
         target_amount INTEGER NOT NULL,
         allocated_amount INTEGER NOT NULL,
         status TEXT NOT NULL,
+        created_at INTEGER NOT NULL,
         target_date INTEGER,
+        priority TEXT NOT NULL,
+        connected_place_ids TEXT,
         connected_place_id TEXT,
         connected_place_name TEXT,
+        notes TEXT,
         icon_json TEXT,
         color INTEGER,
         milestones_json TEXT NOT NULL,

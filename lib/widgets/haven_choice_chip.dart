@@ -19,7 +19,9 @@ class HavenChoiceChip extends StatelessWidget {
   final VoidCallback onTap;
   final Widget? child;
   final Color? color;
-  final double size;
+
+  /// When null, chip sizes to its child (text labels).
+  final double? size;
 
   @override
   Widget build(BuildContext context) {
@@ -36,11 +38,19 @@ class HavenChoiceChip extends StatelessWidget {
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(HavenRadius.sm),
-        child: SizedBox(
-          width: size,
-          height: size,
-          child: Center(child: child),
-        ),
+        child: size != null
+            ? SizedBox(
+                width: size,
+                height: size,
+                child: Center(child: child),
+              )
+            : Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: HavenSpacing.md,
+                  vertical: HavenSpacing.sm,
+                ),
+                child: child,
+              ),
       ),
     );
   }

@@ -3,8 +3,10 @@ import 'package:flutter/material.dart';
 import '../../../theme/haven_colors.dart';
 import 'plan.dart';
 
-/// Seed data for Plans layer prototype (PD-036).
+/// Seed data for Plans layer prototype (PD-036, PD-039).
 abstract final class MockPlansData {
+  static final _seedCreated = DateTime(2026, 1, 1);
+
   static List<Plan> seed() => [
         Plan(
           id: 'plan_apartment',
@@ -12,8 +14,10 @@ abstract final class MockPlansData {
           targetAmount: 500000,
           allocatedAmount: 250000,
           status: PlanStatus.active,
+          createdAt: _seedCreated,
           targetDate: DateTime(2027, 6, 1),
-          connectedPlaceId: 'place_savings',
+          priority: PlanPriority.essential,
+          connectedPlaceIds: const ['place_savings'],
           connectedPlaceName: 'Savings',
           icon: Icons.home_outlined,
           color: HavenColors.primary,
@@ -61,7 +65,10 @@ abstract final class MockPlansData {
           targetAmount: 60000,
           allocatedAmount: 42000,
           status: PlanStatus.active,
-          connectedPlaceId: 'place_main',
+          createdAt: _seedCreated,
+          targetDate: DateTime(2026, 12, 1),
+          priority: PlanPriority.essential,
+          connectedPlaceIds: const ['place_main'],
           connectedPlaceName: 'Main Bank',
           icon: Icons.shield_outlined,
           color: HavenColors.statusGood,
@@ -95,6 +102,9 @@ abstract final class MockPlansData {
           targetAmount: 35000,
           allocatedAmount: 35000,
           status: PlanStatus.completed,
+          createdAt: DateTime(2025, 11, 1),
+          targetDate: DateTime(2026, 5, 20),
+          priority: PlanPriority.niceToHave,
           icon: Icons.laptop_mac_outlined,
           color: HavenColors.statusInteractive,
           milestones: const [
@@ -118,6 +128,8 @@ abstract final class MockPlansData {
           targetAmount: 40000,
           allocatedAmount: 0,
           status: PlanStatus.suggested,
+          createdAt: _seedCreated,
+          priority: PlanPriority.niceToHave,
           icon: Icons.flight_takeoff_outlined,
           color: HavenColors.statusAttention,
           milestones: const [
@@ -165,5 +177,13 @@ abstract final class MockPlansData {
     Icons.flight_takeoff_outlined,
     Icons.school_outlined,
     Icons.savings_outlined,
+  ];
+
+  static const intentPresets = [
+    ('Apartment', Icons.home_outlined),
+    ('Emergency fund', Icons.shield_outlined),
+    ('Vacation', Icons.flight_takeoff_outlined),
+    ('Education', Icons.school_outlined),
+    ('Custom', Icons.flag_outlined),
   ];
 }
