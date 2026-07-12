@@ -48,6 +48,7 @@ Every important discussion ends with a decision recorded here. Any new developer
 | PD-034 | Moment primitive — generic engine, Hero, acknowledgement, Activity | Locked |
 | PD-035 | Money Place — manual source, CRUD, Connected future | Locked |
 | PD-036 | Plans layer — intent, create/detail, layered navigation | Locked |
+| PD-037 | Haven-native form primitives — sheets, fields, selects | Locked |
 
 ---
 
@@ -600,3 +601,25 @@ Reference: [HAVEN_MANIFESTO.md](HAVEN_MANIFESTO.md), [PRODUCT_ARCHITECTURE.md](P
 **Date:** 2026-07-12
 
 Reference: [PRODUCT_ARCHITECTURE.md](PRODUCT_ARCHITECTURE.md), [HDL/20-components.md](HDL/20-components.md)
+
+---
+
+# PD-037
+
+**Decision:** All member-facing forms use Haven form primitives — `HavenSheet`, `HavenTextField`, `HavenAmountField`, `HavenSelect`, `HavenDateField`, `HavenChoiceChip` — instead of Material defaults.
+
+**Reason:** Default Flutter forms break Haven's calm, premium feel. Forms are how members teach Haven about their life; they must feel like Haven.
+
+**Status:** Locked
+
+**Rules:**
+
+1. No Material `OutlineInputBorder` text fields, `DropdownButton`, or system `showDatePicker` in product flows.
+2. Sheet top radius = `HavenRadius.sheet`; input radius = `HavenRadius.input`.
+3. Sheet entry uses `HavenMotion.sheetEnterDuration` / `sheetCurve`.
+4. Large touch targets; gentle primary focus ring; filled soft background on fields.
+5. Selects and dates open Haven sheets, not Material chrome.
+
+**Date:** 2026-07-12
+
+Reference: [HDL/10-radius.md](HDL/10-radius.md), [HDL/12-motion.md](HDL/12-motion.md), [HDL/20-components.md](HDL/20-components.md)

@@ -110,6 +110,10 @@ abstract final class HavenMotion {
   static const double layerBodySlideOffset = 12;
   static const Curve layerCurve = Curves.easeOutCubic;
 
+  // ── Sheets / forms (PD-037) ──────────────────────────────────────
+  static const Duration sheetEnterDuration = Duration(milliseconds: 280);
+  static const Curve sheetCurve = Curves.easeOutCubic;
+
   // ── Spring motion (connected, restrained) ────────────────────────
   static const SpringDescription pulseHeroSettleSpring = SpringDescription(
     mass: 1,

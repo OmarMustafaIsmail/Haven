@@ -29,6 +29,8 @@ Border radius scale for cards, buttons, sheets, and containers. Rounded corners 
 | `HavenRadius.lg` | 24 | `HavenCard` |
 | `HavenRadius.xl` | 32 | Reserved |
 | `HavenRadius.full` | 999 | Circular elements |
+| `HavenRadius.sheet` | 24 (`lg`) | Bottom sheet top corners (PD-037) |
+| `HavenRadius.input` | 16 (`md`) | Text fields and selects (PD-037) |
 
 ---
 

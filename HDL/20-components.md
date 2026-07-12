@@ -51,6 +51,11 @@ The Haven component catalog — shared UI building blocks and product-defining w
 | [HavenLogo](#havenlogo) | `lib/widgets/haven_logo.dart` | Global |
 | [HavenPrimaryButton](#havenprimarybutton) | `lib/widgets/haven_primary_button.dart` | Global |
 | [HavenTextButton](#haventextbutton) | `lib/widgets/haven_text_button.dart` | Global |
+| HavenSheet | `lib/widgets/haven_sheet.dart` | Forms (PD-037) |
+| HavenTextField / HavenAmountField | `lib/widgets/haven_text_field.dart` | Forms (PD-037) |
+| HavenSelect | `lib/widgets/haven_select.dart` | Forms (PD-037) |
+| HavenDateField | `lib/widgets/haven_date_field.dart` | Forms (PD-037) |
+| HavenChoiceChip | `lib/widgets/haven_choice_chip.dart` | Forms (PD-037) |
 
 ---
 
