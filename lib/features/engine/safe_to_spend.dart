@@ -21,11 +21,18 @@ extension PlanConfidenceBandX on PlanConfidenceBand {
 
 /// Qualitative plan confidence — progress vs expected pace (HAVEN_ENGINE.md).
 abstract final class PlanConfidence {
-  static PlanConfidenceBand band(Plan plan, {required DateTime now}) {
+  /// Uses [plan.createdAt] for pace and effective progress when [places] given.
+  static PlanConfidenceBand band(
+    Plan plan, {
+    required DateTime now,
+    List<MoneyPlace> places = const [],
+  }) {
     if (plan.status != PlanStatus.active) return PlanConfidenceBand.onTrack;
     if (plan.targetAmount <= 0) return PlanConfidenceBand.onTrack;
 
-    final progress = plan.progress;
+    final progress = places.isEmpty
+        ? plan.progress
+        : plan.effectiveProgress(places);
     final target = plan.targetDate;
     if (target == null) {
       if (progress >= 0.5) return PlanConfidenceBand.onTrack;
@@ -33,7 +40,7 @@ abstract final class PlanConfidence {
       return PlanConfidenceBand.atRisk;
     }
 
-    final created = now.subtract(const Duration(days: 180));
+    final created = plan.createdAt;
     final totalDays = target.difference(created).inDays.clamp(1, 3650);
     final elapsed = now.difference(created).inDays.clamp(0, totalDays);
     final expected = elapsed / totalDays;
@@ -147,7 +154,7 @@ abstract final class SafeToSpendCalculator {
 
     var intentionHold = 0;
     for (final plan in activePlans) {
-      final band = PlanConfidence.band(plan, now: now);
+      final band = PlanConfidence.band(plan, now: now, places: places);
       if (band == PlanConfidenceBand.tight) {
         intentionHold += (plan.targetAmount * 0.02).round();
       } else if (band == PlanConfidenceBand.atRisk) {

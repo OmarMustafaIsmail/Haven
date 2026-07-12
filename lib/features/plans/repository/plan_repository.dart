@@ -7,7 +7,7 @@ import '../../persistence/haven_database.dart';
 import '../models/mock_plans_data.dart';
 import '../models/plan.dart';
 
-/// Plans store with optional SQLite write-through (PD-036).
+/// Plans store with optional SQLite write-through (PD-036, PD-039).
 class PlanRepository {
   PlanRepository({
     ActivityRepository? activityRepository,
@@ -105,21 +105,28 @@ class PlanRepository {
   void add({
     required String name,
     required int targetAmount,
-    DateTime? targetDate,
-    String? connectedPlaceId,
+    required DateTime targetDate,
+    PlanPriority priority = PlanPriority.important,
+    List<String> connectedPlaceIds = const [],
     String? connectedPlaceName,
+    int allocatedAmount = 0,
+    String? notes,
     IconData? icon,
     Color? color,
+    DateTime? createdAt,
   }) {
     final plan = Plan(
       id: _nextId(),
       name: name,
       targetAmount: targetAmount,
-      allocatedAmount: 0,
+      allocatedAmount: allocatedAmount,
       status: PlanStatus.active,
+      createdAt: createdAt ?? DateTime.now(),
       targetDate: targetDate,
-      connectedPlaceId: connectedPlaceId,
+      priority: priority,
+      connectedPlaceIds: List<String>.from(connectedPlaceIds),
       connectedPlaceName: connectedPlaceName,
+      notes: notes,
       icon: icon ?? Icons.flag_outlined,
       color: color,
     );
@@ -154,6 +161,39 @@ class PlanRepository {
     _notify();
   }
 
+  /// Updates allocation lens + connected places; writes Activity story.
+  void updateAllocation({
+    required String planId,
+    required int allocatedAmount,
+    required List<String> connectedPlaceIds,
+    String? connectedPlaceName,
+  }) {
+    final index = _plans.indexWhere((p) => p.id == planId);
+    if (index < 0) return;
+    final plan = _plans[index];
+    final updated = plan.copyWith(
+      allocatedAmount: allocatedAmount,
+      connectedPlaceIds: List<String>.from(connectedPlaceIds),
+      connectedPlaceName: connectedPlaceName,
+      clearConnectedPlaces: connectedPlaceIds.isEmpty,
+    );
+    _plans[index] = updated;
+    _activity.insert(
+      0,
+      PlanActivityItem(
+        id: 'pa_${DateTime.now().microsecondsSinceEpoch}',
+        label: 'Allocation updated · ${plan.name}',
+        timestamp: 'Today',
+      ),
+    );
+    _persistPlan(updated);
+    _persistActivity();
+    _activityRepository?.addInteraction(
+      label: 'Plan allocation updated · ${plan.name}',
+    );
+    _notify();
+  }
+
   void complete(String id) {
     final index = _plans.indexWhere((p) => p.id == id);
     if (index < 0) return;
@@ -175,12 +215,18 @@ class PlanRepository {
   }
 
   /// Promote a suggested plan into an active one.
-  void activateSuggested(String id) {
+  void activateSuggested(String id, {DateTime? targetDate}) {
     final index = _plans.indexWhere((p) => p.id == id);
     if (index < 0) return;
     final plan = _plans[index];
     if (plan.status != PlanStatus.suggested) return;
-    final updated = plan.copyWith(status: PlanStatus.active);
+    final updated = plan.copyWith(
+      status: PlanStatus.active,
+      targetDate: targetDate ??
+          plan.targetDate ??
+          DateTime.now().add(const Duration(days: 180)),
+      createdAt: DateTime.now(),
+    );
     _plans[index] = updated;
     _activity.insert(
       0,

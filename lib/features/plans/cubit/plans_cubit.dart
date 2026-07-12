@@ -1,12 +1,17 @@
 import 'package:flutter/material.dart';
 
 import '../../../core/cubit/base_cubit.dart';
+import '../../money/repository/money_place_repository.dart';
 import '../repository/plan_repository.dart';
+import '../models/plan.dart';
 import 'plans_state.dart';
 
 class PlansCubit extends BaseCubit<PlansState> {
-  PlansCubit({required PlanRepository repository})
-      : _repository = repository,
+  PlansCubit({
+    required PlanRepository repository,
+    MoneyPlaceRepository? moneyPlaces,
+  })  : _repository = repository,
+        _moneyPlaces = moneyPlaces,
         super(
           PlansLoadedState(
             plans: repository.plans,
@@ -14,9 +19,11 @@ class PlansCubit extends BaseCubit<PlansState> {
           ),
         ) {
     _repository.version.addListener(_onChanged);
+    _moneyPlaces?.version.addListener(_onChanged);
   }
 
   final PlanRepository _repository;
+  final MoneyPlaceRepository? _moneyPlaces;
 
   void _onChanged() {
     emit(
@@ -30,9 +37,12 @@ class PlansCubit extends BaseCubit<PlansState> {
   void createPlan({
     required String name,
     required int targetAmount,
-    DateTime? targetDate,
-    String? connectedPlaceId,
+    required DateTime targetDate,
+    PlanPriority priority = PlanPriority.important,
+    List<String> connectedPlaceIds = const [],
     String? connectedPlaceName,
+    int allocatedAmount = 0,
+    String? notes,
     IconData? icon,
     Color? color,
   }) {
@@ -40,10 +50,27 @@ class PlansCubit extends BaseCubit<PlansState> {
       name: name,
       targetAmount: targetAmount,
       targetDate: targetDate,
-      connectedPlaceId: connectedPlaceId,
+      priority: priority,
+      connectedPlaceIds: connectedPlaceIds,
       connectedPlaceName: connectedPlaceName,
+      allocatedAmount: allocatedAmount,
+      notes: notes,
       icon: icon,
       color: color,
+    );
+  }
+
+  void updateAllocation({
+    required String planId,
+    required int allocatedAmount,
+    required List<String> connectedPlaceIds,
+    String? connectedPlaceName,
+  }) {
+    _repository.updateAllocation(
+      planId: planId,
+      allocatedAmount: allocatedAmount,
+      connectedPlaceIds: connectedPlaceIds,
+      connectedPlaceName: connectedPlaceName,
     );
   }
 
@@ -54,6 +81,7 @@ class PlansCubit extends BaseCubit<PlansState> {
   @override
   Future<void> close() {
     _repository.version.removeListener(_onChanged);
+    _moneyPlaces?.version.removeListener(_onChanged);
     return super.close();
   }
 }
