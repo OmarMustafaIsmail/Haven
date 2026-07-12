@@ -151,7 +151,7 @@ class YouAndHavenScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   HavenPrimaryButton(
-                    label: 'Open Developer Panel',
+                    label: 'Open Developer Panel / Inspector',
                     onPressed: () => DeveloperPanel.open(context),
                   ),
                   const SizedBox(height: HavenSpacing.sm),

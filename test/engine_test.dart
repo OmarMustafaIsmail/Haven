@@ -146,6 +146,7 @@ void main() {
       expect(engine.safeToSpend.value.state, isNot(SafeToSpendState.unknown));
       expect(engine.safeToSpend.value.amount, greaterThan(0));
       expect(engine.pulse.value, isNotNull);
+      expect(engine.candidates.value, isNotEmpty);
       expect(moments.activeMoment, isNotNull);
       expect(
         moments.activeMoment!.title.toLowerCase(),

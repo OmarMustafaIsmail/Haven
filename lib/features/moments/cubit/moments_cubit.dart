@@ -1,4 +1,5 @@
 import '../../../core/cubit/base_cubit.dart';
+import '../../activity/models/activity_item.dart';
 import '../../activity/repository/activity_repository.dart';
 import '../../engine/haven_engine.dart';
 import '../models/moment.dart';
@@ -51,6 +52,10 @@ class MomentsCubit extends BaseCubit<MomentsState> {
 
     _activityRepository.addInteraction(
       label: MomentAcknowledgementCopy.activityLabel(moment, action),
+      kind: action.outcome == MomentActionOutcome.complete ||
+              action.outcome == MomentActionOutcome.navigate
+          ? ActivityKind.momentComplete
+          : ActivityKind.interaction,
     );
 
     emit(

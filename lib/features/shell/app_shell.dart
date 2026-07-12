@@ -254,6 +254,8 @@ class HavenAppServices {
     final devTime = DevTimeController(
       clock: clock,
       engine: engine,
+      commitments: commitments,
+      plans: plans,
       database: database,
     );
     await devTime.hydrate();

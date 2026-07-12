@@ -3,10 +3,15 @@ import 'package:flutter/material.dart';
 
 import '../../persistence/serialization.dart';
 
-/// Kind of Activity entry — transaction or member interaction (PD-033).
+/// Kind of Activity entry — story of money and Haven dialogue (PD-033).
 enum ActivityKind {
   transaction,
   interaction,
+  planMilestone,
+  planAllocation,
+  learning,
+  moneyEdit,
+  momentComplete,
 }
 
 class ActivityItem extends Equatable {
@@ -41,9 +46,12 @@ class ActivityItem extends Equatable {
       };
 
   factory ActivityItem.fromMap(Map<String, Object?> map) {
+    final kindRaw = map['kind'] as String?;
+    final kind = ActivityKind.values.asNameMap()[kindRaw] ??
+        ActivityKind.interaction;
     return ActivityItem(
       id: map['id'] as String,
-      kind: ActivityKind.values.byName(map['kind'] as String),
+      kind: kind,
       label: map['label'] as String,
       amount: map['amount'] as num?,
       icon: HavenSerialization.iconFromJson(map['icon_json'] as String?),
