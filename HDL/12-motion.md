@@ -59,6 +59,8 @@ Body morph when deepening between Home and Money. **Pulse animation is reserved 
 |---|---|
 | `layerBodyMorphDuration` | 240ms |
 | `layerBodySlideOffset` | 12px |
+| `sheetEnterDuration` | 280ms |
+| `sheetCurve` | easeOutCubic |
 | `layerCurve` | `easeOutCubic` |
 
 ### Home unfold stagger (legacy)
@@ -137,7 +139,7 @@ Pulse timing, springs, and haptics — see [HDL/13-financial-pulse.md](13-financ
 |---|---|
 | Reduced-motion system-wide fallback | Not designed |
 | Screen transition tokens | Layer morph tokens added (PD-031) — see Layer transition above |
-| Sheet/modal motion | Not designed |
+| Sheet/modal motion | Designed — `sheetEnterDuration` / `sheetCurve` (PD-037) |
 | Tokenize safe-area motion offsets | Planned |
 
 ### Superseded patterns (do not reintroduce)

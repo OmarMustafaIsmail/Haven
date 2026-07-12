@@ -4,7 +4,9 @@ import '../../theme/haven_colors.dart';
 import '../../theme/haven_spacing.dart';
 import '../../theme/haven_typography.dart';
 import '../../widgets/haven_primary_button.dart';
+import '../../widgets/haven_select.dart';
 import '../../widgets/haven_text_button.dart';
+import '../../widgets/haven_text_field.dart';
 import '../commitments/models/commitment.dart';
 import '../commitments/repository/commitment_repository.dart';
 import '../money/repository/money_place_repository.dart';
@@ -163,78 +165,63 @@ class _OnboardingFlowState extends State<OnboardingFlow> {
     return switch (_step) {
       0 => _StepBody(
           title: 'What should Haven call you?',
-          child: TextField(
+          child: HavenTextField(
             controller: _nameController,
+            label: 'Your name',
             textCapitalization: TextCapitalization.words,
-            decoration: const InputDecoration(
-              labelText: 'Your name',
-              border: OutlineInputBorder(),
-            ),
           ),
         ),
       1 => _StepBody(
           title: 'Your currency',
-          child: Column(
-            children: [
-              for (final code in const ['EGP', 'USD', 'EUR', 'GBP', 'SAR', 'AED'])
-                RadioListTile<String>(
-                  value: code,
-                  groupValue: _currency,
-                  title: Text(code, style: HavenTypography.body),
-                  activeColor: HavenColors.primary,
-                  onChanged: (v) {
-                    if (v != null) setState(() => _currency = v);
-                  },
-                ),
+          child: HavenSelect<String>(
+            label: 'Currency',
+            value: _currency,
+            allowNone: false,
+            options: const [
+              HavenSelectOption(value: 'EGP', label: 'EGP'),
+              HavenSelectOption(value: 'USD', label: 'USD'),
+              HavenSelectOption(value: 'EUR', label: 'EUR'),
+              HavenSelectOption(value: 'GBP', label: 'GBP'),
+              HavenSelectOption(value: 'SAR', label: 'SAR'),
+              HavenSelectOption(value: 'AED', label: 'AED'),
             ],
+            onChanged: (v) {
+              if (v != null) setState(() => _currency = v);
+            },
           ),
         ),
       2 => _StepBody(
           title: 'Where does your money live?',
           child: Column(
             children: [
-              TextField(
+              HavenTextField(
                 controller: _placeNameController,
+                label: 'Money Place name',
                 textCapitalization: TextCapitalization.words,
-                decoration: const InputDecoration(
-                  labelText: 'Money Place name',
-                  border: OutlineInputBorder(),
-                ),
               ),
               const SizedBox(height: HavenSpacing.md),
-              TextField(
+              HavenAmountField(
                 controller: _placeBalanceController,
-                keyboardType: TextInputType.number,
-                decoration: InputDecoration(
-                  labelText: 'Current balance ($_currency)',
-                  border: const OutlineInputBorder(),
-                ),
+                label: 'Current balance',
+                currency: _currency,
               ),
               const SizedBox(height: HavenSpacing.lg),
-              Text(
-                'Optional — salary',
-                style: HavenTypography.title,
-              ),
+              Text('Optional — salary', style: HavenTypography.title),
               const SizedBox(height: HavenSpacing.sm),
-              TextField(
+              HavenAmountField(
                 controller: _salaryController,
-                keyboardType: TextInputType.number,
-                decoration: InputDecoration(
-                  labelText: 'Salary amount ($_currency)',
-                  border: const OutlineInputBorder(),
-                ),
+                label: 'Salary amount',
+                currency: _currency,
               ),
               const SizedBox(height: HavenSpacing.sm),
-              DropdownButtonFormField<String>(
-                initialValue: _salaryCadence,
-                decoration: const InputDecoration(
-                  labelText: 'Cadence',
-                  border: OutlineInputBorder(),
-                ),
-                items: const [
-                  DropdownMenuItem(value: 'weekly', child: Text('Weekly')),
-                  DropdownMenuItem(value: 'monthly', child: Text('Monthly')),
-                  DropdownMenuItem(value: 'annual', child: Text('Annual')),
+              HavenSelect<String>(
+                label: 'Cadence',
+                value: _salaryCadence,
+                allowNone: false,
+                options: const [
+                  HavenSelectOption(value: 'weekly', label: 'Weekly'),
+                  HavenSelectOption(value: 'monthly', label: 'Monthly'),
+                  HavenSelectOption(value: 'annual', label: 'Annual'),
                 ],
                 onChanged: (v) {
                   if (v != null) setState(() => _salaryCadence = v);
@@ -254,22 +241,16 @@ class _OnboardingFlowState extends State<OnboardingFlow> {
                 ),
               ),
               const SizedBox(height: HavenSpacing.md),
-              TextField(
+              HavenTextField(
                 controller: _goalNameController,
+                label: 'Goal name',
                 textCapitalization: TextCapitalization.words,
-                decoration: const InputDecoration(
-                  labelText: 'Goal name',
-                  border: OutlineInputBorder(),
-                ),
               ),
               const SizedBox(height: HavenSpacing.md),
-              TextField(
+              HavenAmountField(
                 controller: _goalAmountController,
-                keyboardType: TextInputType.number,
-                decoration: InputDecoration(
-                  labelText: 'Target amount ($_currency)',
-                  border: const OutlineInputBorder(),
-                ),
+                label: 'Target amount',
+                currency: _currency,
               ),
             ],
           ),

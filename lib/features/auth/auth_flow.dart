@@ -6,6 +6,7 @@ import '../../theme/haven_typography.dart';
 import '../../widgets/haven_logo.dart';
 import '../../widgets/haven_primary_button.dart';
 import '../../widgets/haven_text_button.dart';
+import '../../widgets/haven_text_field.dart';
 
 /// Placeholder authentication — validates navigation, not identity.
 class AuthFlow extends StatefulWidget {
@@ -150,23 +151,17 @@ class _AccountForm extends StatelessWidget {
         ),
         const SizedBox(height: HavenSpacing.xl),
         if (showName) ...[
-          TextField(
+          HavenTextField(
             controller: nameController,
+            label: 'Your name',
             textCapitalization: TextCapitalization.words,
-            decoration: const InputDecoration(
-              labelText: 'Your name',
-              border: OutlineInputBorder(),
-            ),
           ),
           const SizedBox(height: HavenSpacing.md),
         ],
-        TextField(
+        HavenTextField(
           controller: emailController,
+          label: 'Email',
           keyboardType: TextInputType.emailAddress,
-          decoration: const InputDecoration(
-            labelText: 'Email',
-            border: OutlineInputBorder(),
-          ),
         ),
         const Spacer(),
         HavenPrimaryButton(label: primaryLabel, onPressed: onPrimary),
