@@ -12,6 +12,7 @@ import '../engine/haven_engine.dart';
 import '../home/cubit/home_cubit.dart';
 import '../home/cubit/home_state.dart';
 import '../home/service/home_service.dart';
+import '../insights/insights_screen.dart';
 import '../moments/cubit/moments_cubit.dart';
 import '../moments/repository/moment_repository.dart';
 import '../money/cubit/money_cubit.dart';
@@ -22,6 +23,7 @@ import '../persistence/haven_database.dart';
 import '../plans/cubit/plans_cubit.dart';
 import '../plans/models/mock_plans_data.dart';
 import '../plans/repository/plan_repository.dart';
+import '../profile/you_and_haven_screen.dart';
 import '../settings/member_settings.dart';
 import 'haven_experience.dart';
 import 'haven_layer.dart';
@@ -326,6 +328,7 @@ class _AppShellState extends State<AppShell> {
   VoidCallback? _safeToSpendListener;
   VoidCallback? _pulseListener;
   HavenLayer _layer = HavenLayer.home;
+  HavenNavItem _section = HavenNavItem.home;
 
   HavenEngine get _engine => widget.services.engine;
 
@@ -343,26 +346,73 @@ class _AppShellState extends State<AppShell> {
     super.dispose();
   }
 
-  HavenNavItem get _activeNav => switch (_layer) {
-        HavenLayer.home => HavenNavItem.home,
-        HavenLayer.money => HavenNavItem.money,
-        HavenLayer.plans => HavenNavItem.plans,
-      };
+  HavenNavItem get _activeNav {
+    if (_section == HavenNavItem.insights ||
+        _section == HavenNavItem.profile) {
+      return _section;
+    }
+    return switch (_layer) {
+      HavenLayer.home => HavenNavItem.home,
+      HavenLayer.money => HavenNavItem.money,
+      HavenLayer.plans => HavenNavItem.plans,
+    };
+  }
 
-  void _onNavSelected(HavenNavItem item) {
+  Future<void> _onNavSelected(HavenNavItem item) async {
+    if (item == HavenNavItem.insights || item == HavenNavItem.profile) {
+      setState(() => _section = item);
+      return;
+    }
+
+    final targetLayer = switch (item) {
+      HavenNavItem.money => HavenLayer.money,
+      HavenNavItem.plans => HavenLayer.plans,
+      _ => HavenLayer.home,
+    };
+
+    final wasAway = _section == HavenNavItem.insights ||
+        _section == HavenNavItem.profile;
+
+    setState(() {
+      _section = item;
+      if (wasAway) _layer = targetLayer;
+    });
+
+    if (wasAway) return;
+
     final experience = _experienceKey.currentState;
     if (experience == null || experience.isTransitioning) return;
 
     switch (item) {
       case HavenNavItem.home:
-        experience.enterHome();
+        await experience.enterHome();
       case HavenNavItem.money:
-        experience.enterMoney();
+        await experience.enterMoney();
       case HavenNavItem.plans:
-        experience.enterPlans();
+        await experience.enterPlans();
       default:
         break;
     }
+  }
+
+  Widget _body(HavenAppServices s) {
+    return switch (_section) {
+      HavenNavItem.insights => InsightsScreen(engine: _engine),
+      HavenNavItem.profile => YouAndHavenScreen(services: s),
+      _ => HavenExperience(
+          key: _experienceKey,
+          layer: _layer,
+          activityRepository: s.activityRepository,
+          onLayerChanged: (layer) => setState(() {
+            _layer = layer;
+            _section = switch (layer) {
+              HavenLayer.home => HavenNavItem.home,
+              HavenLayer.money => HavenNavItem.money,
+              HavenLayer.plans => HavenNavItem.plans,
+            };
+          }),
+        ),
+    };
   }
 
   @override
@@ -409,12 +459,7 @@ class _AppShellState extends State<AppShell> {
         services: s,
         devTime: s.devTime,
         child: Scaffold(
-          body: HavenExperience(
-            key: _experienceKey,
-            layer: _layer,
-            activityRepository: s.activityRepository,
-            onLayerChanged: (layer) => setState(() => _layer = layer),
-          ),
+          body: _body(s),
           bottomNavigationBar: HavenBottomNav(
             activeItem: _activeNav,
             onItemSelected: _onNavSelected,
