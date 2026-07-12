@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 
+import 'package:haven/features/activity/models/activity_item.dart';
 import 'package:haven/features/activity/repository/activity_repository.dart';
 import 'package:haven/features/moments/cubit/moments_cubit.dart';
 import 'package:haven/features/moments/cubit/moments_state.dart';
@@ -95,7 +96,7 @@ void main() {
       await cubit.close();
 
       expect(
-        activityRepo.items.any((item) => item.kind.name == 'interaction'),
+        activityRepo.items.any((item) => item.kind == ActivityKind.momentComplete),
         isTrue,
       );
     });

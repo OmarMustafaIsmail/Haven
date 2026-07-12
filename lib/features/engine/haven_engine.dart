@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 
 import '../../models/pulse_state.dart';
+import '../activity/models/activity_item.dart';
 import '../activity/repository/activity_repository.dart';
 import '../commitments/repository/commitment_repository.dart';
 import '../developer/dev_time_config.dart';
@@ -36,6 +37,7 @@ class HavenEngine {
         _commitments = commitments,
         _plans = plans,
         _moments = moments,
+        _activity = activity,
         _clock = clock ?? HavenClock(fixedNow: now ?? DateTime(2026, 7, 12)),
         _database = database,
         _ownsClock = clock == null,
@@ -52,6 +54,7 @@ class HavenEngine {
   final CommitmentRepository _commitments;
   final PlanRepository _plans;
   final MomentRepository _moments;
+  final ActivityRepository? _activity;
   final HavenClock _clock;
   final HavenDatabase? _database;
   final bool _ownsClock;
@@ -59,11 +62,17 @@ class HavenEngine {
 
   HavenClock get clock => _clock;
   DevTimeConfig get devTime => _devTime;
+  MoneyPlaceRepository get moneyPlaces => _moneyPlaces;
+  CommitmentRepository get commitments => _commitments;
+  PlanRepository get plans => _plans;
 
   final ValueNotifier<SafeToSpendResult> safeToSpend =
       ValueNotifier(SafeToSpendResult.empty);
   final ValueNotifier<PulseState> pulse = ValueNotifier(PulseState.calm);
   final ValueNotifier<List<Moment>> insights = ValueNotifier(const []);
+
+  /// Full ranked observation list from the last recompute (Inspector).
+  final ValueNotifier<List<Moment>> candidates = ValueNotifier(const []);
 
   /// Optional Pulse override for Developer Panel previews.
   PulseState? _pulseOverride;
@@ -137,6 +146,7 @@ class HavenEngine {
     );
 
     _moments.syncCandidates(observed);
+    candidates.value = List.unmodifiable(observed);
     insights.value =
         observed.length <= 1 ? const [] : observed.sublist(1);
   }
@@ -144,6 +154,10 @@ class HavenEngine {
   /// Product memory — dismissed observations lose future rank.
   void rememberDismissal(String momentId) {
     _memorySuppressed.add(momentId);
+    _activity?.addInteraction(
+      label: 'Haven learned · skipped a repeated Moment',
+      kind: ActivityKind.learning,
+    );
     _persistMemory();
     recompute();
   }
@@ -163,5 +177,6 @@ class HavenEngine {
     safeToSpend.dispose();
     pulse.dispose();
     insights.dispose();
+    candidates.dispose();
   }
 }

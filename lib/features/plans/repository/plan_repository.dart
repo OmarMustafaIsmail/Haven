@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart';
 
+import '../../activity/models/activity_item.dart';
 import '../../activity/repository/activity_repository.dart';
 import '../../persistence/haven_database.dart';
 import '../models/mock_plans_data.dart';
@@ -190,6 +191,7 @@ class PlanRepository {
     _persistActivity();
     _activityRepository?.addInteraction(
       label: 'Plan allocation updated · ${plan.name}',
+      kind: ActivityKind.planAllocation,
     );
     _notify();
   }

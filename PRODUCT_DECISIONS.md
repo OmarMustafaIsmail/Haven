@@ -49,8 +49,14 @@ Every important discussion ends with a decision recorded here. Any new developer
 | PD-035 | Money Place — manual source, CRUD, Connected future | Locked |
 | PD-036 | Plans layer — intent, create/detail, layered navigation | Locked |
 | PD-037 | Haven-native form primitives — sheets, fields, selects | Locked |
-| PD-038 | Safe to Spend confidence states — Confident / Estimated / Unknown | Locked |
-| PD-039 | Plan target date mandatory + allocation as member-owned lens | Locked |
+| PD-038 | Safe to Spend confidence states — Confident / Estimated / Unknown | Superseded by PD-040 |
+| PD-039 | Plan target date mandatory + allocation as member-owned lens | Amended by PD-041 |
+| PD-040 | Engine Confidence continuum — STS reflects how much Haven knows | Locked |
+| PD-041 | Plan allocation and connected places are optional | Locked |
+| PD-042 | Explainability is product philosophy — every derivation can answer Why | Locked |
+| PD-043 | Derived readings are siblings — Facts → Engine recalculates together | Locked |
+| PD-044 | Activity is the member's story — never the engine's diary | Locked |
+| PD-045 | Product Confidence scorecard validates the system, not screens | Locked |
 
 ---
 
@@ -634,9 +640,9 @@ Reference: [HDL/10-radius.md](HDL/10-radius.md), [HDL/12-motion.md](HDL/12-motio
 
 **Reason:** Showing a large floor (e.g. 389k of 450k) without enough facts destroys trust. Members should trust Haven because Haven knows when it does not know enough.
 
-**Status:** Locked
+**Status:** Superseded by PD-040
 
-**Rules:**
+**Rules (historical — checklist gates):**
 
 1. **Unknown** — no Money Places, or no Commitments and no dated active Plans. Show need-more-info copy + CTAs. Never invent an amount.
 2. **Estimated** — partial picture (e.g. missing salary, undated plans). Show rounded amount ("Around X") with subtitle "Based on what Haven currently knows."
@@ -644,6 +650,8 @@ Reference: [HDL/10-radius.md](HDL/10-radius.md), [HDL/12-motion.md](HDL/12-motio
 4. Tap Safe to Spend opens a Why breakdown of available money, commitment hold, plan intention hold, and safety margin — only using calculator inputs.
 
 **Date:** 2026-07-12
+
+**Superseded:** 2026-07-12 — rigid checklist gates replaced by Engine Confidence continuum (PD-040).
 
 Reference: [HAVEN_ENGINE.md](HAVEN_ENGINE.md), [lib/features/engine/safe_to_spend.dart](lib/features/engine/safe_to_spend.dart)
 
@@ -655,16 +663,140 @@ Reference: [HAVEN_ENGINE.md](HAVEN_ENGINE.md), [lib/features/engine/safe_to_spen
 
 **Reason:** Undated plans make Safe to Spend and pace confidence guesswork. Allocation-as-transfer would invent money movement Haven does not perform. A lens (`effectiveAllocated = min(allocatedAmount, sum(connected balances))`) keeps Places as the source of truth while letting members express intention.
 
-**Status:** Locked
+**Status:** Locked — amended by PD-041 (allocation optional)
 
 **Rules:**
 
 1. Create / activate flows require a target date for active plans.
-2. Members set `allocatedAmount` and one-or-more `connectedPlaceIds`. Effective allocation and progress use live place balances.
-3. Changing a place balance immediately changes effective progress → confidence → STS → Pulse → Moments.
+2. ~~Members must set allocation and connected places.~~ → See PD-041: both optional.
+3. When allocation + places exist, changing a place balance changes effective progress and plan confidence in the same engine recompute as STS / Pulse / Moments (siblings — PD-043).
 4. Confidence pace uses `plan.createdAt` (not a fake start). UI labels: High / Medium / Low for onTrack / tight / atRisk.
 5. Supersedes PD-036 rule that target date was optional at create.
 
 **Date:** 2026-07-12
 
 Reference: [HAVEN_ENGINE.md](HAVEN_ENGINE.md), [lib/features/plans/models/plan.dart](lib/features/plans/models/plan.dart)
+
+---
+
+# PD-040
+
+**Decision:** Haven computes **Engine Confidence** (Low / Medium / High) from *how much it actually knows* — not from hardcoded checklists (must have salary, must have outflow, etc.). Safe to Spend **reflects** Engine Confidence; it does not invent a separate gate system.
+
+**Reason:** Checklist gates produce false Unknown (e.g. cash on hand, no salary yet → still know something). Members trust judgment about completeness of the picture, not a form completeness score.
+
+**Status:** Locked
+
+**Rules:**
+
+1. Engine Confidence is a continuous judgment over facts present: places, balances, commitments, dated plans, allocation coverage, etc.
+2. Safe to Spend display follows Engine Confidence:
+   - **High** → speak a floor with confident copy
+   - **Medium** → speak a rounded / cautious amount ("Around…", "Based on what Haven currently knows.")
+   - **Low** → prefer restraint; may still show a cautious floor when cash exists — never invent structure that isn't there
+3. No rule of the form "requires ≥1 inflow AND ≥1 outflow AND …" as a hard gate.
+4. Prefer uncertainty over false precision remains true — Low confidence does not mean inventing a large floor from thin air when there is *no* money picture; it means not treating missing salary as automatic Unknown when cash exists.
+
+**Date:** 2026-07-12
+
+Reference: [HAVEN_ENGINE.md](HAVEN_ENGINE.md)
+
+---
+
+# PD-041
+
+**Decision:** Connected Money Places and allocation are **optional** on a Plan. Missing allocation lowers Plan Confidence and can surface a Moment ("Let's connect money to this plan") — Haven does not refuse to create the Plan.
+
+**Reason:** Intention comes before logistics. Forcing allocation at create invents a decision the member hasn't made.
+
+**Status:** Locked
+
+**Rules:**
+
+1. Create flow: name, target amount, target date required; places + allocation optional.
+2. No allocation → Plan Confidence tends Low; Intelligence may recommend connecting places.
+3. When places + allocation exist, effective allocation lens (PD-039) still applies.
+4. Amends PD-039 rule 2.
+
+**Date:** 2026-07-12
+
+---
+
+# PD-042
+
+**Decision:** Explainability is product philosophy. Every derived reading should eventually answer **Why** — not only Safe to Spend.
+
+**Reason:** Trust compounds when Haven can show its work. A single Why sheet for STS is the first instance, not the end state.
+
+**Status:** Locked (philosophy now; surfaces incremental)
+
+**Rules:**
+
+1. Ship STS Why first (implemented).
+2. Next candidates: Pulse Why, Plan Confidence Why, Moment Why, Insight Why.
+3. Why content uses only inputs the engine actually used — never invented detail.
+4. Why is a Haven pattern (sheet / inline), not a one-off screen.
+
+**Date:** 2026-07-12
+
+---
+
+# PD-043
+
+**Decision:** Derived readings are **siblings**. Facts change → Engine recalculates Safe to Spend, Plan Confidence, Pulse, Moments/Insights **together**. No derived value feeds another as a pipeline.
+
+**Reason:** Chain mental models (Place → Plan → STS → Pulse) create spaghetti and fake dependencies. HAVEN_ENGINE already states this; product and Inspector language must match.
+
+**Status:** Locked
+
+**Rules:**
+
+1. Correct model: `Facts + Time → Engine → {STS, Pulse, Plan confidence, Moments, Insights}` in one recompute.
+2. STS amount may be an *input* to Pulse only as a shared fact-derived number already computed in the same pass — not a conceptual parent. Prefer Pulse reading the same facts directly when practical.
+3. Diagrams and Inspector must not imply a feed-forward chain.
+4. Restates [HAVEN_ENGINE.md](HAVEN_ENGINE.md) "siblings, not a chain."
+
+**Date:** 2026-07-12
+
+---
+
+# PD-044
+
+**Decision:** Activity is the **member's story**, not the engine's diary.
+
+**Reason:** Logging recalculations and internal decisions turns Activity into debug output. Members should see life events and dialogue with Haven.
+
+**Status:** Locked
+
+**Rules:**
+
+1. Log: salary confirmed, plan funded/completed, balance updated, Haven learned your payday, allocation connected — human labels.
+2. Do not log: STS recalculated, Pulse changed, engine recomputed, candidate ranked.
+3. Learning entries are member-facing ("Haven learned…"), never technical suppress-id dumps.
+
+**Date:** 2026-07-12
+
+---
+
+# PD-045
+
+**Decision:** After engine validation, Haven tracks **Product Confidence** — our confidence in each system capability — as a living scorecard (not member-facing).
+
+**Reason:** We are validating a system, not screens. A shared scorecard prevents false "done" on green UIs with red engines.
+
+**Status:** Locked
+
+**Scorecard (initial):**
+
+| Capability | Confidence | Notes |
+|---|---|---|
+| Safe to Spend | 🟡 | Continuum (PD-040) still to land; Why exists |
+| Pulse | 🟢 | Sibling of facts; ritual shipped |
+| Plans | 🟡 | Dates + confidence; allocation optional (PD-041) pending UX |
+| Moments | 🔴 | Engine-driven but ranking/explainability thin |
+| Learning | 🟡 | Suppress memory works; story copy hardening |
+| Insights | ⚪ | Surface exists; depth not validated |
+
+Update this table as validation evidence lands — see [ENGINE_VALIDATION_CHECKLIST.md](ENGINE_VALIDATION_CHECKLIST.md).
+
+**Date:** 2026-07-12

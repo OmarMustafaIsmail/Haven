@@ -75,11 +75,12 @@ class ActivityRepository {
     required String label,
     String timestamp = 'Today',
     IconData icon = Icons.check_circle_outline_rounded,
+    ActivityKind kind = ActivityKind.interaction,
   }) {
     add(
       ActivityItem(
         id: 'act_${DateTime.now().microsecondsSinceEpoch}',
-        kind: ActivityKind.interaction,
+        kind: kind,
         label: label,
         icon: icon,
         timestamp: timestamp,

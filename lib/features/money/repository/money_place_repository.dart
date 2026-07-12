@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:sqflite/sqflite.dart';
 
+import '../../activity/models/activity_item.dart';
 import '../../activity/repository/activity_repository.dart';
 import '../../persistence/haven_database.dart';
 import '../models/mock_money_data.dart';
@@ -80,7 +81,10 @@ class MoneyPlaceRepository {
     );
     _places.add(place);
     _persistPlace(place);
-    _activityRepository?.addInteraction(label: 'Added $name');
+    _activityRepository?.addInteraction(
+      label: 'Added $name',
+      kind: ActivityKind.moneyEdit,
+    );
     _notify();
   }
 
@@ -98,6 +102,7 @@ class MoneyPlaceRepository {
     if (previous.balance != balance) {
       _activityRepository?.addInteraction(
         label: '${previous.name} balance updated',
+        kind: ActivityKind.moneyEdit,
       );
     }
     _notify();
@@ -112,6 +117,7 @@ class MoneyPlaceRepository {
     _persistPlace(updated);
     _activityRepository?.addInteraction(
       label: '${previous.name} balance updated',
+      kind: ActivityKind.moneyEdit,
     );
     _notify();
   }
@@ -122,7 +128,10 @@ class MoneyPlaceRepository {
     final name = _places[index].name;
     _places.removeAt(index);
     _deletePersisted(id);
-    _activityRepository?.addInteraction(label: 'Removed $name');
+    _activityRepository?.addInteraction(
+      label: 'Removed $name',
+      kind: ActivityKind.moneyEdit,
+    );
     _notify();
   }
 }
