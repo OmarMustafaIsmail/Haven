@@ -9,6 +9,7 @@ import '../../widgets/haven_card.dart';
 import '../../widgets/haven_primary_button.dart';
 import '../../widgets/haven_text_button.dart';
 import '../commitments/models/commitment.dart';
+import '../engine/safe_to_spend.dart';
 import '../moments/models/moment.dart';
 import '../plans/models/plan.dart';
 import '../shell/app_shell.dart';
@@ -78,7 +79,10 @@ class _DeveloperPanelState extends State<DeveloperPanel> {
               children: [
                 _kv('Clock', dateFmt.format(now)),
                 _kv('Offset', '${s.clock.offset}'),
-                _kv('Safe to Spend', '${engine.safeToSpend.value}'),
+                _kv(
+                  'Safe to Spend',
+                  _stsLabel(engine.safeToSpend.value),
+                ),
                 _kv('Pulse', engine.pulse.value.name),
                 _kv(
                   'Active Moment',
@@ -373,6 +377,17 @@ class _DeveloperPanelState extends State<DeveloperPanel> {
         ],
       ),
     );
+  }
+
+  String _stsLabel(SafeToSpendResult sts) {
+    switch (sts.state) {
+      case SafeToSpendState.unknown:
+        return 'Unknown';
+      case SafeToSpendState.estimated:
+        return 'Estimated · ${sts.displayAmount ?? 0}';
+      case SafeToSpendState.confident:
+        return 'Confident · ${sts.displayAmount ?? 0}';
+    }
   }
 }
 

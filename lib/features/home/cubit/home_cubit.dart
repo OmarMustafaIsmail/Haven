@@ -1,6 +1,7 @@
 import '../../../core/cubit/base_cubit.dart';
 import '../../../core/handlers/api_calls_handler.dart';
 import '../../../models/pulse_state.dart';
+import '../../engine/safe_to_spend.dart';
 import '../service/home_service.dart';
 import 'home_state.dart';
 
@@ -128,11 +129,11 @@ class HomeCubit extends BaseCubit<HomeState> with ApiCallsHandler {
   }
 
   /// Derived Safe to Spend from HavenEngine — not a stored fact.
-  void applySafeToSpend(num amount) {
+  void applySafeToSpend(SafeToSpendResult result) {
     final current = state;
     if (current is! HomeLoadedState) return;
-    if (current.data.safeToSpend == amount) return;
-    emit(current.copyWith(data: current.data.copyWith(safeToSpend: amount)));
+    if (current.data.safeToSpend == result) return;
+    emit(current.copyWith(data: current.data.copyWith(safeToSpend: result)));
   }
 
   /// Derived Pulse from HavenEngine — sibling of Safe to Spend.

@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 
 import '../../../models/pulse_state.dart';
+import '../../engine/safe_to_spend.dart';
 
 class HomeData extends Equatable {
   const HomeData({
@@ -11,12 +12,12 @@ class HomeData extends Equatable {
 
   final String greeting;
   final PulseState pulseState;
-  final num safeToSpend;
+  final SafeToSpendResult safeToSpend;
 
   HomeData copyWith({
     String? greeting,
     PulseState? pulseState,
-    num? safeToSpend,
+    SafeToSpendResult? safeToSpend,
   }) {
     return HomeData(
       greeting: greeting ?? this.greeting,

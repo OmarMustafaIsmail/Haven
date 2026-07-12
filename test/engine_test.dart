@@ -10,6 +10,7 @@ import 'package:haven/features/moments/models/moment.dart';
 import 'package:haven/features/moments/repository/moment_repository.dart';
 import 'package:haven/features/money/models/money_place.dart';
 import 'package:haven/features/money/repository/money_place_repository.dart';
+import 'package:haven/features/plans/models/plan.dart';
 import 'package:haven/features/plans/repository/plan_repository.dart';
 import 'package:haven/models/pulse_state.dart';
 
@@ -17,32 +18,81 @@ void main() {
   final now = DateTime(2026, 7, 12);
 
   group('SafeToSpendCalculator', () {
-    test('computes a conservative floor from places and outflows', () {
-      final places = const [
-        MoneyPlace(id: 'a', name: 'Main', balance: 28000),
-        MoneyPlace(id: 'b', name: 'Savings', balance: 8200),
-      ];
-      final commitments = [
-        Commitment(
-          id: 'rent',
-          name: 'Rent',
-          direction: CommitmentDirection.outflow,
-          amount: 8000,
-          cadence: CommitmentCadence.monthly,
-          nextDate: now.add(const Duration(days: 2)),
-        ),
-      ];
-
+    test('unknown when there are no Money Places', () {
       final sts = SafeToSpendCalculator.compute(
-        places: places,
-        commitments: commitments,
+        places: const [],
+        commitments: const [],
         activePlans: const [],
         now: now,
       );
+      expect(sts.state, SafeToSpendState.unknown);
+      expect(sts.amount, isNull);
+      expect(sts.missingHints, isNotEmpty);
+    });
 
-      // 36200 - 8000 - margin(~1810) = ~26390
-      expect(sts, lessThan(36200 - 8000));
-      expect(sts, greaterThan(20000));
+    test('estimated when places exist but salary is missing', () {
+      final sts = SafeToSpendCalculator.compute(
+        places: const [
+          MoneyPlace(id: 'a', name: 'Main', balance: 28000),
+        ],
+        commitments: [
+          Commitment(
+            id: 'rent',
+            name: 'Rent',
+            direction: CommitmentDirection.outflow,
+            amount: 8000,
+            cadence: CommitmentCadence.monthly,
+            nextDate: now.add(const Duration(days: 2)),
+          ),
+        ],
+        activePlans: const [],
+        now: now,
+      );
+      expect(sts.state, SafeToSpendState.estimated);
+      expect(sts.amount, isNotNull);
+      expect(sts.displayAmount, isNotNull);
+      expect(sts.breakdown.availableMoney, 28000);
+    });
+
+    test('confident when places, inflow, outflow, and dated plans exist', () {
+      final sts = SafeToSpendCalculator.compute(
+        places: const [
+          MoneyPlace(id: 'a', name: 'Main', balance: 28000),
+          MoneyPlace(id: 'b', name: 'Savings', balance: 8200),
+        ],
+        commitments: [
+          Commitment(
+            id: 'salary',
+            name: 'Salary',
+            direction: CommitmentDirection.inflow,
+            amount: 12000,
+            cadence: CommitmentCadence.monthly,
+            nextDate: now,
+          ),
+          Commitment(
+            id: 'rent',
+            name: 'Rent',
+            direction: CommitmentDirection.outflow,
+            amount: 8000,
+            cadence: CommitmentCadence.monthly,
+            nextDate: now.add(const Duration(days: 2)),
+          ),
+        ],
+        activePlans: [
+          Plan(
+            id: 'p1',
+            name: 'Apartment',
+            targetAmount: 100000,
+            allocatedAmount: 10000,
+            status: PlanStatus.active,
+            targetDate: now.add(const Duration(days: 365)),
+          ),
+        ],
+        now: now,
+      );
+      expect(sts.state, SafeToSpendState.confident);
+      expect(sts.amount, greaterThan(0));
+      expect(sts.amount, lessThan(36200 - 8000));
     });
   });
 
@@ -92,7 +142,8 @@ void main() {
         now: now,
       );
 
-      expect(engine.safeToSpend.value, greaterThan(0));
+      expect(engine.safeToSpend.value.state, isNot(SafeToSpendState.unknown));
+      expect(engine.safeToSpend.value.amount, greaterThan(0));
       expect(engine.pulse.value, isNotNull);
       expect(moments.activeMoment, isNotNull);
       expect(
@@ -155,13 +206,13 @@ void main() {
         now: now,
       );
 
-      final before = engine.safeToSpend.value;
+      final before = engine.safeToSpend.value.amount ?? 0;
       expect(before, greaterThan(0));
 
       final place = money.places.first;
       money.updateBalance(id: place.id, balance: place.balance + 10000);
 
-      expect(engine.safeToSpend.value, greaterThan(before));
+      expect(engine.safeToSpend.value.amount ?? 0, greaterThan(before));
       expect(engine.pulse.value, isNotNull);
 
       engine.dispose();

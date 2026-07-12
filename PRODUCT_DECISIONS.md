@@ -49,6 +49,7 @@ Every important discussion ends with a decision recorded here. Any new developer
 | PD-035 | Money Place — manual source, CRUD, Connected future | Locked |
 | PD-036 | Plans layer — intent, create/detail, layered navigation | Locked |
 | PD-037 | Haven-native form primitives — sheets, fields, selects | Locked |
+| PD-038 | Safe to Spend confidence states — Confident / Estimated / Unknown | Locked |
 
 ---
 
@@ -623,3 +624,24 @@ Reference: [PRODUCT_ARCHITECTURE.md](PRODUCT_ARCHITECTURE.md), [HDL/20-component
 **Date:** 2026-07-12
 
 Reference: [HDL/10-radius.md](HDL/10-radius.md), [HDL/12-motion.md](HDL/12-motion.md), [HDL/20-components.md](HDL/20-components.md)
+
+---
+
+# PD-038
+
+**Decision:** Safe to Spend has three confidence states — **Confident**, **Estimated**, and **Unknown**. Haven prefers uncertainty over false precision.
+
+**Reason:** Showing a large floor (e.g. 389k of 450k) without enough facts destroys trust. Members should trust Haven because Haven knows when it does not know enough.
+
+**Status:** Locked
+
+**Rules:**
+
+1. **Unknown** — no Money Places, or no Commitments and no dated active Plans. Show need-more-info copy + CTAs. Never invent an amount.
+2. **Estimated** — partial picture (e.g. missing salary, undated plans). Show rounded amount ("Around X") with subtitle "Based on what Haven currently knows."
+3. **Confident** — places with balance, inflow commitment, outflow or clear runway, and every active plan has a target date. Show "You can safely spend X today."
+4. Tap Safe to Spend opens a Why breakdown of available money, commitment hold, plan intention hold, and safety margin — only using calculator inputs.
+
+**Date:** 2026-07-12
+
+Reference: [HAVEN_ENGINE.md](HAVEN_ENGINE.md), [lib/features/engine/safe_to_spend.dart](lib/features/engine/safe_to_spend.dart)

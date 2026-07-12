@@ -6,6 +6,7 @@ import '../../theme/haven_spacing.dart';
 import '../../theme/haven_typography.dart';
 import '../../widgets/haven_card.dart';
 import '../engine/haven_engine.dart';
+import '../engine/safe_to_spend.dart';
 import '../home/models/pulse_status_copy.dart';
 import '../moments/models/moment.dart';
 
@@ -23,7 +24,7 @@ class InsightsScreen extends StatelessWidget {
         child: ValueListenableBuilder<List<Moment>>(
           valueListenable: engine.insights,
           builder: (context, insights, _) {
-            return ValueListenableBuilder<int>(
+            return ValueListenableBuilder<SafeToSpendResult>(
               valueListenable: engine.safeToSpend,
               builder: (context, sts, _) {
                 return ValueListenableBuilder<PulseState>(
@@ -72,12 +73,12 @@ class InsightsScreen extends StatelessWidget {
                               ),
                               const SizedBox(height: HavenSpacing.sm),
                               Text(
-                                HavenTypography.formatAmount(sts),
+                                _stsHeadline(sts),
                                 style: HavenTypography.moneyEvidence,
                               ),
                               const SizedBox(height: HavenSpacing.xs),
                               Text(
-                                'A trustworthy floor — not a prediction.',
+                                _stsSubtitle(sts),
                                 style: HavenTypography.caption,
                               ),
                             ],
@@ -139,5 +140,27 @@ class InsightsScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  static String _stsHeadline(SafeToSpendResult sts) {
+    switch (sts.state) {
+      case SafeToSpendState.unknown:
+        return 'Not enough yet';
+      case SafeToSpendState.estimated:
+        return 'Around ${HavenTypography.formatAmount(sts.displayAmount ?? 0)}';
+      case SafeToSpendState.confident:
+        return HavenTypography.formatAmount(sts.displayAmount ?? 0);
+    }
+  }
+
+  static String _stsSubtitle(SafeToSpendResult sts) {
+    switch (sts.state) {
+      case SafeToSpendState.unknown:
+        return 'Haven needs a little more information.';
+      case SafeToSpendState.estimated:
+        return 'Based on what Haven currently knows.';
+      case SafeToSpendState.confident:
+        return 'A trustworthy floor — not a prediction.';
+    }
   }
 }

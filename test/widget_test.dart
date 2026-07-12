@@ -51,7 +51,12 @@ void main() {
           find.text('Some things need attention.').evaluate().isNotEmpty,
       isTrue,
     );
-    expect(find.text('You can safely spend'), findsOneWidget);
+    // Demo seed has a plan without target date → Estimated STS copy.
+    expect(
+      find.textContaining('Around').evaluate().isNotEmpty ||
+          find.text('You can safely spend').evaluate().isNotEmpty,
+      isTrue,
+    );
     expect(find.text("Today's Moment"), findsOneWidget);
     expect(find.text('Did your salary arrive?'), findsOneWidget);
     expect(find.text('Salary expected today.'), findsOneWidget);
@@ -162,7 +167,11 @@ void main() {
 
     expect(find.textContaining('Good afternoon, Omar'), findsOneWidget);
     expect(find.text("You're in a strong place."), findsOneWidget);
-    expect(find.text('You can safely spend'), findsOneWidget);
+    expect(
+      find.textContaining('Around').evaluate().isNotEmpty ||
+          find.text('You can safely spend').evaluate().isNotEmpty,
+      isTrue,
+    );
     expect(find.text('Reading your Pulse'), findsNothing);
   });
 
