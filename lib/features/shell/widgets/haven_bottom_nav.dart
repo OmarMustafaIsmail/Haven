@@ -10,9 +10,11 @@ class HavenBottomNav extends StatelessWidget {
   const HavenBottomNav({
     super.key,
     this.activeItem = HavenNavItem.home,
+    this.onItemSelected,
   });
 
   final HavenNavItem activeItem;
+  final ValueChanged<HavenNavItem>? onItemSelected;
 
   @override
   Widget build(BuildContext context) {
@@ -32,18 +34,19 @@ class HavenBottomNav extends StatelessWidget {
                 icon: Icons.home_rounded,
                 label: 'Home',
                 isActive: activeItem == HavenNavItem.home,
+                onTap: () => onItemSelected?.call(HavenNavItem.home),
               ),
               _NavIcon(
                 icon: Icons.account_balance_wallet_outlined,
                 label: 'Money',
                 isActive: activeItem == HavenNavItem.money,
-                enabled: false,
+                onTap: () => onItemSelected?.call(HavenNavItem.money),
               ),
               _NavIcon(
                 icon: Icons.flag_outlined,
                 label: 'Plans',
                 isActive: activeItem == HavenNavItem.plans,
-                enabled: false,
+                onTap: () => onItemSelected?.call(HavenNavItem.plans),
               ),
               _NavIcon(
                 icon: Icons.insights_outlined,
@@ -71,12 +74,14 @@ class _NavIcon extends StatelessWidget {
     required this.label,
     required this.isActive,
     this.enabled = true,
+    this.onTap,
   });
 
   final IconData icon;
   final String label;
   final bool isActive;
   final bool enabled;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -88,16 +93,29 @@ class _NavIcon extends StatelessWidget {
 
     return Opacity(
       opacity: enabled ? 1 : 0.5,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, color: color, size: 24),
-          const SizedBox(height: HavenSpacing.xs),
-          Text(
-            label,
-            style: HavenTypography.caption.copyWith(color: color),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: enabled ? onTap : null,
+          borderRadius: BorderRadius.circular(8),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: HavenSpacing.sm,
+              vertical: HavenSpacing.xs,
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(icon, color: color, size: 24),
+                const SizedBox(height: HavenSpacing.xs),
+                Text(
+                  label,
+                  style: HavenTypography.caption.copyWith(color: color),
+                ),
+              ],
+            ),
           ),
-        ],
+        ),
       ),
     );
   }

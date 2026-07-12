@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
@@ -16,7 +17,7 @@ import 'visual/pulse_circle.dart';
 /// Haven's Financial Check-In ritual — reusable, Home-agnostic.
 ///
 /// Emits events. Never imports Home or business logic.
-/// See [FINANCIAL_PULSE_ARCHITECTURE.md] for component boundaries.
+/// See [HDL/13-financial-pulse.md] for component boundaries.
 class FinancialPulse extends StatefulWidget {
   const FinancialPulse({
     super.key,
@@ -36,6 +37,9 @@ class FinancialPulse extends StatefulWidget {
     this.onHeartbeatFinished,
     this.onReturnedHome,
     this.onPullProgress,
+    this.onLayerTransitionStarted,
+    this.onLayerMorphProgress,
+    this.onLayerTransitionFinished,
     this.child,
     this.backgroundColor = HavenColors.background,
   });
@@ -70,14 +74,24 @@ class FinancialPulse extends StatefulWidget {
 
   /// Alias for [onBeatProgress] during the pre-beat pull.
   final ValueChanged<double>? onPullProgress;
+
+  /// Layer navigation began (PD-031).
+  final VoidCallback? onLayerTransitionStarted;
+
+  /// Body morph progress during layer heartbeat (0–1).
+  final ValueChanged<double>? onLayerMorphProgress;
+
+  /// Layer navigation complete — Pulse returned to header.
+  final VoidCallback? onLayerTransitionFinished;
+
   final Widget? child;
   final Color backgroundColor;
 
   @override
-  State<FinancialPulse> createState() => _FinancialPulseState();
+  State<FinancialPulse> createState() => FinancialPulseState();
 }
 
-class _FinancialPulseState extends State<FinancialPulse>
+class FinancialPulseState extends State<FinancialPulse>
     with TickerProviderStateMixin {
   late final PulseRitualController _controller;
   late final PulseAnimationEngine _engine;
@@ -140,9 +154,71 @@ class _FinancialPulseState extends State<FinancialPulse>
   void _onHeroSettleTick() => setState(() {});
 
   bool get _beatGestureEnabled {
+    if (_controller.isLayerTransitionActive) return false;
     if (_controller.phase == PulseRitualPhase.checkInPull) return true;
     if (!_controller.canPull) return false;
     return _scrollAtTop;
+  }
+
+  /// Pulse-anchored layer transition — no financial reading (PD-031).
+  Future<void> runLayerTransition({
+    required VoidCallback onMorphStart,
+    ValueChanged<double>? onMorphProgress,
+  }) async {
+    if (_controller.isRitualActive || _controller.isLayerTransitionActive) {
+      return;
+    }
+
+    widget.onLayerTransitionStarted?.call();
+    _controller.beginLayerTransition();
+    setState(() {});
+
+    final travelDone = Completer<void>();
+    _engine.runLayerTravel(
+      onTick: () {
+        _controller.updateLayerTravel(
+          HavenMotion.layerCurve.transform(_engine.layerTravel.value),
+        );
+        setState(() {});
+      },
+      onComplete: () {
+        _controller.completeLayerTravel();
+        travelDone.complete();
+      },
+    );
+    await travelDone.future;
+    if (!mounted) return;
+
+    onMorphStart();
+    setState(() {});
+
+    final heartbeatDone = Completer<void>();
+    _engine.runLightHeartbeat(
+      onTick: () {
+        final t = _engine.layerHeartbeat.value;
+        onMorphProgress?.call(t);
+        widget.onLayerMorphProgress?.call(t);
+        setState(() {});
+      },
+      onComplete: () {
+        _controller.completeLayerHeartbeat();
+        heartbeatDone.complete();
+      },
+    );
+    await heartbeatDone.future;
+    if (!mounted) return;
+
+    final returnDone = Completer<void>();
+    _engine.returnHome.addListener(_onReturnTick);
+    _engine.runReturnHome(onComplete: () {
+      if (!mounted) return;
+      _engine.returnHome.removeListener(_onReturnTick);
+      _controller.completeLayerReturn();
+      widget.onLayerTransitionFinished?.call();
+      returnDone.complete();
+    });
+    await returnDone.future;
+    if (mounted) setState(() {});
   }
 
   bool _onScrollNotification(ScrollNotification notification) {
@@ -287,13 +363,24 @@ class _FinancialPulseState extends State<FinancialPulse>
     );
     final width = MediaQuery.sizeOf(context).width;
 
+    final phase = _controller.phase;
+    final pullProgress = phase == PulseRitualPhase.layerTravelToCenter
+        ? _controller.layerTravelProgress
+        : _controller.pullProgress;
+    final heartbeatT = phase == PulseRitualPhase.layerHeartbeat
+        ? _engine.layerHeartbeat.value
+        : _engine.heartbeat.value;
+    final returnT = phase == PulseRitualPhase.layerReturnToHeader
+        ? _engine.returnHome.value
+        : _engine.returnHome.value;
+
     final frame = _resolveFrame(
-      phase: _controller.phase,
+      phase: phase,
       padding: padding,
       width: width,
-      pullProgress: _controller.pullProgress,
-      heartbeatT: _engine.heartbeat.value,
-      returnT: _engine.returnHome.value,
+      pullProgress: pullProgress,
+      heartbeatT: heartbeatT,
+      returnT: returnT,
       heroSettleT: _engine.heroSettle.value,
     );
 
@@ -309,6 +396,9 @@ class _FinancialPulseState extends State<FinancialPulse>
         (_controller.phase == PulseRitualPhase.checkInPull
             ? _controller.pullOffset * 0.22
             : 0);
+
+    final isRitualElevated =
+        _controller.isRitualActive || _controller.isLayerTransitionActive;
 
     return ColoredBox(
       color: widget.backgroundColor,
@@ -350,7 +440,7 @@ class _FinancialPulseState extends State<FinancialPulse>
                 child: IgnorePointer(
                   child: Material(
                     color: Colors.transparent,
-                    elevation: _controller.isRitualActive ? 4 : 0,
+                    elevation: isRitualElevated ? 4 : 0,
                     shadowColor: Colors.black.withValues(alpha: 0.05),
                     child: Stack(
                       clipBehavior: Clip.none,

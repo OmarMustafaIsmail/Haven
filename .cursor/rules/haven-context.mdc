@@ -8,11 +8,12 @@ alwaysApply: true
 Before any product, design, or engineering work on Haven, read these documents:
 
 1. [HAVEN_MANIFESTO.md](HAVEN_MANIFESTO.md) — why Haven exists (product soul)
-2. [HAVEN_HOME_EXPERIENCE.md](HAVEN_HOME_EXPERIENCE.md) — daily financial ritual on Home
-3. [HAVEN_FINANCIAL_PULSE.md](HAVEN_FINANCIAL_PULSE.md) — Check-In interaction (Home Experience v4)
-4. [HAVEN_ARCHITECTURE.md](HAVEN_ARCHITECTURE.md) — engineering architecture
-5. [HDL.md](HDL.md) — design language (discovered while building)
-6. [PRODUCT_DECISIONS.md](PRODUCT_DECISIONS.md) — locked decisions with rationale
+2. [PRODUCT_ARCHITECTURE.md](PRODUCT_ARCHITECTURE.md) — how Haven is designed
+3. [PRODUCT_DECISIONS.md](PRODUCT_DECISIONS.md) — locked decisions with rationale
+4. [HDL.md](HDL.md) — UI implementation (design language)
+   - Pulse / Check-In: [HDL/13-financial-pulse.md](HDL/13-financial-pulse.md) (self-contained spec)
+   - Components: [HDL/20-components.md](HDL/20-components.md)
+   - Tokens: [HDL/00-foundations.md](HDL/00-foundations.md) → 07–12
 
 ## Workflow
 

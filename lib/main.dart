@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'features/home/cubit/home_cubit.dart';
-import 'features/home/screens/home_screen.dart';
-import 'features/home/service/home_service.dart';
+import 'features/shell/app_shell.dart';
 import 'theme/haven_theme.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(const HavenApp());
 }
 
@@ -19,10 +17,7 @@ class HavenApp extends StatelessWidget {
       title: 'Haven',
       debugShowCheckedModeBanner: false,
       theme: HavenTheme.light,
-      home: BlocProvider(
-        create: (_) => HomeCubit(const HomeService()),
-        child: const HomeScreen(),
-      ),
+      home: const HavenBootstrap(),
     );
   }
 }

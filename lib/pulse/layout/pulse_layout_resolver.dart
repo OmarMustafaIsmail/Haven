@@ -148,6 +148,55 @@ abstract final class PulseLayoutResolver {
           contentShift: HavenMotion.pulseContentShiftMax,
         );
         return _lerpFrame(a: from, b: resting, t: t);
+
+      case PulseRitualPhase.layerTravelToCenter:
+        final t = Curves.easeOutCubic.transform(pullProgress.clamp(0.0, 1.0));
+        final resting = restingFrame(greeting: restGreeting, pulse: restPulse);
+        final centeredPulse = _centeredPulseCenter(width, padding, conceptCChrome);
+        const destinationDiameter = HavenMotion.pulseCheckInCircleSize + 10;
+
+        return PulseLayoutFrame(
+          greetingOffset: resting.greetingOffset,
+          greetingStyle: resting.greetingStyle,
+          pulseCenter: Offset.lerp(restPulse, centeredPulse, t)!,
+          pulseDiameter: resting.pulseDiameter +
+              (destinationDiameter - resting.pulseDiameter) * t,
+          pulseScale: resting.pulseScale + t * 0.05,
+          pulseGlow: resting.pulseGlow + t * 0.18,
+          chromeHeight: resting.chromeHeight,
+          contentShift: 0,
+        );
+
+      case PulseRitualPhase.layerHeartbeat:
+        final resting = restingFrame(greeting: restGreeting, pulse: restPulse);
+        final centeredPulse = _centeredPulseCenter(width, padding, conceptCChrome);
+        final scale = PulseMotion.lightHeartbeatScale(heartbeatT);
+
+        return PulseLayoutFrame(
+          greetingOffset: resting.greetingOffset,
+          greetingStyle: resting.greetingStyle,
+          pulseCenter: centeredPulse,
+          pulseDiameter: HavenMotion.pulseCheckInCircleSize + 10,
+          pulseScale: scale,
+          pulseGlow: 0.5 + heartbeatT * 0.15,
+          chromeHeight: resting.chromeHeight,
+          contentShift: 0,
+        );
+
+      case PulseRitualPhase.layerReturnToHeader:
+        final t = Curves.easeInOutCubic.transform(returnT);
+        final resting = restingFrame(greeting: restGreeting, pulse: restPulse);
+        final from = PulseLayoutFrame(
+          greetingOffset: resting.greetingOffset,
+          greetingStyle: resting.greetingStyle,
+          pulseCenter: _centeredPulseCenter(width, padding, conceptCChrome),
+          pulseDiameter: HavenMotion.pulseCheckInCircleSize + 10,
+          pulseScale: 1,
+          pulseGlow: 0.45,
+          chromeHeight: resting.chromeHeight,
+          contentShift: 0,
+        );
+        return _lerpFrame(a: from, b: resting, t: t);
     }
   }
 

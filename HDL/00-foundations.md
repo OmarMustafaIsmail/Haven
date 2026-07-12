@@ -1,30 +1,20 @@
 # HDL 00 — Foundations
 
-## Purpose
-
-The principles and conventions that govern every Haven Design Language decision.
-
-## Status
-
-**LOCKED**
-
-## Reasoning
-
-These principles were established during Haven's brand and product definition phase. They have been exercised in the brand identity, Home screen direction (Concept C), and the Home Experience v2 redesign. They are durable — they define how Haven thinks about design, not specific pixel values.
-
-## Validation notes
-
-- Brand identity and logo construction validated in Figma and exported to production assets.
-- Home screen Concept C scored highest on emotional criteria (reduces anxiety, communicates trust, morning habit potential).
-- Home Experience v2 applies these principles: one hero (Financial Pulse), confidence before data, subtraction over addition.
-
-## Implementation notes
-
-No direct token file. These principles are enforced through review against [HAVEN_MANIFESTO.md](../HAVEN_MANIFESTO.md) and [HAVEN_HOME_EXPERIENCE.md](../HAVEN_HOME_EXPERIENCE.md).
+**Status:** LOCKED
 
 ---
 
-## Design Principles
+## Purpose
+
+The principles and conventions governing every Haven Design Language decision. Read this first — all other HDL documents inherit from here.
+
+Product soul lives in [HAVEN_MANIFESTO.md](../HAVEN_MANIFESTO.md). Product architecture in [PRODUCT_ARCHITECTURE.md](../PRODUCT_ARCHITECTURE.md). HDL covers **visual and interaction implementation**.
+
+---
+
+## Principles
+
+### Design principles
 
 - Calm over exciting.
 - Confidence before data.
@@ -37,9 +27,7 @@ No direct token file. These principles are enforced through review against [HAVE
 - Members are never judged.
 - Explain every recommendation.
 
----
-
-## Visual Style
+### Visual style
 
 The interface should feel Apple-level minimal, premium, quiet, elegant, modern, and timeless.
 
@@ -47,9 +35,7 @@ The interface should feel Apple-level minimal, premium, quiet, elegant, modern, 
 
 Whitespace is part of the design. Everything should breathe.
 
----
-
-## Inspiration Sources
+### Inspiration sources
 
 Study principles from — do not copy:
 
@@ -59,9 +45,7 @@ Study principles from — do not copy:
 - Arc Browser
 - Things 3
 
----
-
-## Quality Bar
+### Quality bar
 
 Before shipping any screen, ask:
 
@@ -70,3 +54,83 @@ Before shipping any screen, ask:
 - Would Copilot Money remove another element?
 
 If not, simplify further.
+
+---
+
+## Tokens
+
+Foundations has no direct token file. Tokens live in [`lib/theme/`](../lib/theme/) and are documented per system:
+
+| System | Document |
+|---|---|
+| Color | [07-color-system.md](07-color-system.md) |
+| Typography | [08-typography.md](08-typography.md) |
+| Spacing | [09-spacing.md](09-spacing.md) |
+| Radius | [10-radius.md](10-radius.md) |
+| Motion | [12-motion.md](12-motion.md) |
+| Pulse | [13-financial-pulse.md](13-financial-pulse.md) |
+
+Code tokens are implementation source. HDL documents explain *why*.
+
+---
+
+## Rules
+
+- No hardcoded design values in widgets — use Haven tokens.
+- Refer to people as **members**, not users.
+- Check [PRODUCT_DECISIONS.md](../PRODUCT_DECISIONS.md) before changing locked decisions.
+- Log new locked decisions with date and rationale.
+- Consistency beats novelty — do not redesign validated patterns without compelling reason.
+- HDL evolves: build → validate → extract → standardize.
+
+---
+
+## Examples
+
+### Correct
+
+- Safe to Spend uses `HavenTypography.display` + `HavenColors.textPrimary`
+- One hero message on Home; secondary content below the fold
+- Check-In language: "Reading your Pulse" not "Loading…"
+
+### Incorrect
+
+- Hardcoded `#1D544E` in a widget ❌
+- Dashboard with six competing metrics on Home ❌
+- "Pull to refresh" copy ❌
+- Red alarm styling for gentle attention states ❌
+
+---
+
+## Accessibility
+
+- Accessibility is a feature, not an afterthought.
+- Never communicate state through color alone.
+- Financial copy must be plain language — no jargon without explanation.
+- Motion and haptics supplement accessible text — never replace it.
+
+---
+
+## Future extensions
+
+- Dark mode foundations (after light experience is complete)
+- Tablet and responsive layout principles
+- Localization typography rules
+- Component-level accessibility checklist in HDL/20
+
+---
+
+## Validation notes
+
+- Brand identity validated in Figma and exported to production assets.
+- Home Concept C scored highest on emotional criteria.
+- Home Experience applies: one hero (Financial Pulse), confidence before data, subtraction over addition.
+
+---
+
+## Related
+
+- [HAVEN_MANIFESTO.md](../HAVEN_MANIFESTO.md)
+- [PRODUCT_ARCHITECTURE.md](../PRODUCT_ARCHITECTURE.md)
+- [PRODUCT_DECISIONS.md](../PRODUCT_DECISIONS.md)
+- [HDL.md](../HDL.md) — document index

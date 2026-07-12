@@ -39,4 +39,12 @@ abstract final class PulseMotion {
     if (t < 0.92) return (t - 0.48) / 0.44;
     return 1;
   }
+
+  /// Single light beat for layer navigation (PD-031).
+  static double lightHeartbeatScale(double t) {
+    const beatEnd = 0.88;
+    if (t <= beatEnd) return _singleBeatScale(t / beatEnd);
+    final local = (t - beatEnd) / (1 - beatEnd);
+    return 1 - (0.02 * HavenMotion.pulseSettleCurve.transform(local));
+  }
 }

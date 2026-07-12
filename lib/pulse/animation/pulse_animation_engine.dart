@@ -27,6 +27,16 @@ class PulseAnimationEngine {
       vsync: vsync,
       duration: HavenMotion.pulseReturnToHeaderDuration,
     );
+
+    layerTravel = AnimationController(
+      vsync: vsync,
+      duration: HavenMotion.layerTravelDuration,
+    );
+
+    layerHeartbeat = AnimationController(
+      vsync: vsync,
+      duration: HavenMotion.layerHeartbeatDuration,
+    );
   }
 
   final TickerProvider vsync;
@@ -35,6 +45,8 @@ class PulseAnimationEngine {
   late final AnimationController heroSettle;
   late final AnimationController heartbeat;
   late final AnimationController returnHome;
+  late final AnimationController layerTravel;
+  late final AnimationController layerHeartbeat;
 
   int _lastBeatHaptic = 0;
   bool _settleHapticFired = false;
@@ -44,6 +56,8 @@ class PulseAnimationEngine {
     heroSettle.dispose();
     heartbeat.dispose();
     returnHome.dispose();
+    layerTravel.dispose();
+    layerHeartbeat.dispose();
   }
 
   void _runSpring(
@@ -122,6 +136,61 @@ class PulseAnimationEngine {
       HavenMotion.pulseReturnSpring,
       onComplete: onComplete,
     );
+  }
+
+  void runLayerTravel({
+    required VoidCallback onTick,
+    required VoidCallback onComplete,
+  }) {
+    breath.stop();
+
+    void tickListener() => onTick();
+
+    void statusListener(AnimationStatus status) {
+      if (status == AnimationStatus.completed) {
+        layerTravel.removeListener(tickListener);
+        layerTravel.removeStatusListener(statusListener);
+        layerTravel.reset();
+        if (!breath.isAnimating) breath.repeat(reverse: true);
+        onComplete();
+      }
+    }
+
+    layerTravel.addListener(tickListener);
+    layerTravel.addStatusListener(statusListener);
+    layerTravel.forward(from: 0);
+  }
+
+  void runLightHeartbeat({
+    required VoidCallback onTick,
+    required VoidCallback onComplete,
+  }) {
+    _lastBeatHaptic = 0;
+    _settleHapticFired = false;
+    breath.stop();
+
+    void tickListener() {
+      onTick();
+      final t = layerHeartbeat.value;
+      if (_lastBeatHaptic == 0 && t >= 0.42) {
+        _lastBeatHaptic = 1;
+        HapticFeedback.lightImpact();
+      }
+    }
+
+    void statusListener(AnimationStatus status) {
+      if (status == AnimationStatus.completed) {
+        layerHeartbeat.removeListener(tickListener);
+        layerHeartbeat.removeStatusListener(statusListener);
+        layerHeartbeat.reset();
+        if (!breath.isAnimating) breath.repeat(reverse: true);
+        onComplete();
+      }
+    }
+
+    layerHeartbeat.addListener(tickListener);
+    layerHeartbeat.addStatusListener(statusListener);
+    layerHeartbeat.forward(from: 0);
   }
 
   void hapticThreshold() => HapticFeedback.lightImpact();

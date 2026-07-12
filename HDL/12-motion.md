@@ -1,16 +1,16 @@
 # HDL 12 — Motion
 
+**Status:** EXPERIMENTAL
+
+**Implementation:** [`lib/theme/haven_motion.dart`](../lib/theme/haven_motion.dart)
+
+---
+
 ## Purpose
 
-Motion principles for Haven — especially the Financial Check-In and first-launch presentation. Principles precede values. Tokenize durations in code only after prototype validation.
+Global motion principles and shared motion tokens for Haven. Defines how movement should feel across the product.
 
-## Status
-
-**EXPERIMENTAL** — Home Experience v4 (PD-027)
-
-## Reasoning
-
-v4 deliberately simplifies v3 motion. Premium feeling comes from **restraint, clarity, and motion quality** — not visual complexity. No particles, no elastic exaggeration, no disappearing content.
+**Pulse-specific motion** (Check-In ritual, heartbeat, springs, haptics) is specified entirely in [HDL/13-financial-pulse.md](13-financial-pulse.md). This document covers principles and non-Pulse tokens only.
 
 ---
 
@@ -26,127 +26,131 @@ v4 deliberately simplifies v3 motion. Premium feeling comes from **restraint, cl
 | **Premium** | Restrained, polished, confident |
 | **Human** | Warm, not mechanical |
 
+### Global rules
+
+- Everything moves **slowly**.
+- Everything **breathes** where appropriate.
+- Nothing **bounces** — no overshoot springs except where physically justified.
+- All validated durations live in `HavenMotion` — **never hardcoded** in widgets.
+- The member should remember the **feeling**, not the animation.
+
 ### Avoid
 
 - Playful animations
 - Elastic exaggeration
-- Bouncy effects (no overshoot springs)
+- Bouncy effects
 - Overly decorative transitions
 - Particles, flying objects, magical effects
 - Refresh or loading metaphors (spinners, progress bars, rotation icons)
 - Content disappearing or fading during Check-In
-
-### Product rule
-
-The **heartbeat is the Check-In** — not a loading state.
-
-The member should remember the **feeling**, not the animation.
+- Page push / slide-left between Haven layers (use Pulse-anchored morph — PD-031)
 
 ---
 
-## Motion Phases (v4)
+## Tokens
 
-### Passive breath
+Non-Pulse tokens in `HavenMotion`:
 
-- Almost imperceptible scale/opacity cycle every few seconds on header circle.
-- No heartbeat. No attention-seeking.
+### Layer transition (PD-031)
 
-### First launch presentation
+Body morph when deepening between Home and Money. **Pulse animation is reserved for pull Check-In only** — layer changes do not move or beat the Pulse.
 
-- Greeting + Pulse in expanded layout with full content visible.
-- After ~1 second: greeting and Pulse transition **together** into header.
-- Content shifts upward smoothly. **Nothing disappears. Nothing fades away.**
-- Triggered on entering Home — not after every Check-In.
-
-### Check-In pull
-
-- Pulse **grows** and **travels toward screen center** with the pull gesture.
-- Content below shifts down — **HavenHeroCard stays visually unchanged**.
-
-### Heartbeat
-
-- Pulse at **center** — calm **double beat**.
-- HavenHeroCard enters **Pulse reading** only when Pulse reaches destination.
-
-### Pulse reading
-
-- **Pulse Line** — hospital-monitor-style ECG sweep on `HavenHeroCard`.
-- Sweeps left-to-right once (or holds calmly at end if response is slow).
-- Color: current `PulseState` accent. No clinical alarm styling.
-- Previous wellbeing copy may dim — **never** replaced with fake/scrambled values.
-
-### Reveal
-
-- When Pulse Line completes **and** Check-In response arrives: show real emotional status + Safe to Spend.
-- Quiet transition — not a slot-machine or count-up gimmick.
-
-### Return to header
-
-- Pulse returns from **screen center** to header position.
-- **No particles. No arc animations. No compression effects.**
-- Ends exactly where it began.
-
----
-
-## Home Content Motion
-
-During Check-In:
-
-| Phase | HavenHeroCard |
+| Token | Duration / value |
 |---|---|
-| Pull | **Unchanged** — shifts down with content only |
-| Beat threshold | Enters **Pulse reading** — Pulse Line appears |
-| Pulse reading | ECG sweep — the wait |
-| Reveal | Real status + Safe to Spend from response |
-| Return | Settled result remains; Pulse returns to header |
+| `layerBodyMorphDuration` | 240ms |
+| `layerBodySlideOffset` | 12px |
+| `layerCurve` | `easeOutCubic` |
 
-**Never during Check-In:** random number scrambling, fake status cycling, spinners, progress bars.
+### Home unfold stagger (legacy)
 
-Content shifts downward during pull to make room — never hide or fade the Home away.
+Used for sequential content appearance after heartbeat. May be revised.
+
+| Token | Duration |
+|---|---|
+| `unfoldStatusDelay` | 100ms |
+| `unfoldMoneyDelay` | 250ms |
+| `unfoldGuidanceDelay` | 450ms |
+| `unfoldActivityDelay` | 600ms |
+| `countUpDuration` | 800ms |
+| `homeUnfoldTotalDuration` | heartbeat + 800ms |
+
+### Curves
+
+| Token | Curve |
+|---|---|
+| `unfoldCurve` | `easeOut` |
+| `pulseBreathCurve` | `easeInOut` |
+| `pulseSettleCurve` | `easeOut` |
+| `pulseRevealCurve` | `easeOutCubic` |
+| `pulseHeartbeatExpandCurve` | `easeOutCubic` |
+| `pulseHeartbeatContractCurve` | `easeInOut` |
+
+### Shared pull threshold
+
+| Token | Value |
+|---|---|
+| `pullThreshold` | 120px |
+
+Used by Pulse Check-In — see HDL/13 for pull behaviour.
 
 ---
 
-## Global Haven Motion
+## Rules
 
-- Everything moves slowly.
-- Everything breathes where appropriate.
-- Nothing bounces.
-- Restrained spring animations only where physically justified.
-- All validated durations live in `HavenMotion` — never hardcoded in widgets.
+- Reference `HavenMotion` for every duration, curve, and spring.
+- Do not duplicate Pulse phase documentation here — link to HDL/13.
+- Do not add motion without a product reason.
+- Respect platform reduced-motion settings when implementing fallbacks.
 
 ---
 
-## Validation notes
+## Examples
 
-### Superseded
+### Correct
 
-| Version | Rejected motion patterns |
+```dart
+duration: HavenMotion.countUpDuration,
+curve: HavenMotion.unfoldCurve,
+```
+
+### Incorrect
+
+```dart
+duration: const Duration(milliseconds: 800), // ❌ hardcoded
+```
+
+Pulse timing, springs, and haptics — see [HDL/13-financial-pulse.md](13-financial-pulse.md).
+
+---
+
+## Accessibility
+
+- Motion must not be the sole carrier of critical information.
+- Provide reduced-motion alternatives for ritual animations (future — tracked in HDL/13).
+- Haptics supplement visual feedback — never replace accessible copy.
+
+---
+
+## Future extensions
+
+| Item | Status |
+|---|---|
+| Reduced-motion system-wide fallback | Not designed |
+| Screen transition tokens | Layer morph tokens added (PD-031) — see Layer transition above |
+| Sheet/modal motion | Not designed |
+| Tokenize safe-area motion offsets | Planned |
+
+### Superseded patterns (do not reintroduce)
+
+| Version | Rejected |
 |---|---|
 | v2 | Auto-recognition heartbeat on every open |
 | v3 | Abstract glyph stretch, particle return, elastic pull, hidden content reveal |
-
-### v4 (validated direction — PD-030 pending implementation)
-
-- First-launch expanded → header settle (~1s)
-- Connected greeting + Pulse settle/return; pull shifts content only; beat at center (PD-030)
-- Content shift (not hide) during pull
-- Header circle double beat + HavenHeroCard Pulse Line reading
-- Result reveal after line completes and response arrives
-
----
-
-## Implementation notes
-
-**Current code:** [`lib/pulse/`](../lib/pulse/) reflects **superseded v3** motion (glyph painter, particle return). Refactor to v4.
-
-**Circular Pulse:** [`lib/widgets/pulse_orb.dart`](../lib/widgets/pulse_orb.dart) — reuse glow/breath/heartbeat logic.
-
-**Interaction spec:** [HAVEN_FINANCIAL_PULSE.md](../HAVEN_FINANCIAL_PULSE.md)
 
 ---
 
 ## Related
 
-- [HDL/13-financial-pulse.md](13-financial-pulse.md) — circular Pulse visual spec
-- [HDL/20-components.md](20-components.md) — FinancialPulse component
-- [HAVEN_HOME_EXPERIENCE.md](../HAVEN_HOME_EXPERIENCE.md) — Home screen spec
+- [HDL/13-financial-pulse.md](13-financial-pulse.md) — definitive Pulse motion spec
+- [HDL/20-components.md](20-components.md) — component catalog
+- [PRODUCT_DECISIONS.md](../PRODUCT_DECISIONS.md) — PD-027, PD-030, PD-031
