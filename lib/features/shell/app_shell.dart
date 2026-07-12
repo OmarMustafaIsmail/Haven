@@ -4,6 +4,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../activity/repository/activity_repository.dart';
 import '../commitments/models/mock_commitments.dart';
 import '../commitments/repository/commitment_repository.dart';
+import '../developer/dev_time_config.dart';
+import '../developer/developer_scope.dart';
 import '../engine/haven_clock.dart';
 import '../engine/haven_engine.dart';
 import '../home/cubit/home_cubit.dart';
@@ -76,6 +78,7 @@ class HavenAppServices {
     required this.planRepository,
     required this.commitmentRepository,
     required this.engine,
+    required this.devTime,
   });
 
   final HavenDatabase? database;
@@ -86,6 +89,7 @@ class HavenAppServices {
   final PlanRepository planRepository;
   final CommitmentRepository commitmentRepository;
   final HavenEngine engine;
+  final DevTimeController devTime;
 
   /// Production / device: open SQLite and hydrate.
   static Future<HavenAppServices> create() async {
@@ -183,6 +187,14 @@ class HavenAppServices {
       database: database,
     );
 
+    final devTime = DevTimeController(
+      clock: clock,
+      engine: engine,
+      database: database,
+    );
+    await devTime.hydrate();
+    engine.applyDevTime(devTime.config);
+
     return HavenAppServices(
       database: database,
       clock: clock,
@@ -192,6 +204,7 @@ class HavenAppServices {
       planRepository: plans,
       commitmentRepository: commitments,
       engine: engine,
+      devTime: devTime,
     );
   }
 
@@ -226,6 +239,8 @@ class HavenAppServices {
     if (db != null && db.isOpen) {
       await db.setSetting(HavenSettingsKeys.clockOffsetMs, '0');
     }
+    await devTime.setEnabled(false);
+    engine.applyDevTime(devTime.config);
     engine.recompute();
   }
 }
@@ -256,6 +271,7 @@ class _AppShellState extends State<AppShell> {
     if (_pulseListener != null) {
       _engine.pulse.removeListener(_pulseListener!);
     }
+    widget.services.devTime.dispose();
     _engine.dispose();
     widget.services.clock.dispose();
     super.dispose();
@@ -321,16 +337,20 @@ class _AppShellState extends State<AppShell> {
           create: (_) => PlansCubit(repository: s.planRepository),
         ),
       ],
-      child: Scaffold(
-        body: HavenExperience(
-          key: _experienceKey,
-          layer: _layer,
-          activityRepository: s.activityRepository,
-          onLayerChanged: (layer) => setState(() => _layer = layer),
-        ),
-        bottomNavigationBar: HavenBottomNav(
-          activeItem: _activeNav,
-          onItemSelected: _onNavSelected,
+      child: DeveloperScope(
+        services: s,
+        devTime: s.devTime,
+        child: Scaffold(
+          body: HavenExperience(
+            key: _experienceKey,
+            layer: _layer,
+            activityRepository: s.activityRepository,
+            onLayerChanged: (layer) => setState(() => _layer = layer),
+          ),
+          bottomNavigationBar: HavenBottomNav(
+            activeItem: _activeNav,
+            onItemSelected: _onNavSelected,
+          ),
         ),
       ),
     );

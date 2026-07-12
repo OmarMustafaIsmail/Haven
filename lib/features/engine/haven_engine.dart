@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import '../../models/pulse_state.dart';
 import '../activity/repository/activity_repository.dart';
 import '../commitments/repository/commitment_repository.dart';
+import '../developer/dev_time_config.dart';
 import '../moments/models/moment.dart';
 import '../moments/repository/moment_repository.dart';
 import '../money/repository/money_place_repository.dart';
@@ -30,13 +31,15 @@ class HavenEngine {
     HavenClock? clock,
     HavenDatabase? database,
     DateTime? now,
+    DevTimeConfig? devTime,
   })  : _moneyPlaces = moneyPlaces,
         _commitments = commitments,
         _plans = plans,
         _moments = moments,
         _clock = clock ?? HavenClock(fixedNow: now ?? DateTime(2026, 7, 12)),
         _database = database,
-        _ownsClock = clock == null {
+        _ownsClock = clock == null,
+        _devTime = devTime ?? DevTimeConfig.production {
     _moneyPlaces.version.addListener(recompute);
     _commitments.version.addListener(recompute);
     _plans.version.addListener(recompute);
@@ -52,8 +55,10 @@ class HavenEngine {
   final HavenClock _clock;
   final HavenDatabase? _database;
   final bool _ownsClock;
+  DevTimeConfig _devTime;
 
   HavenClock get clock => _clock;
+  DevTimeConfig get devTime => _devTime;
 
   final ValueNotifier<int> safeToSpend = ValueNotifier(0);
   final ValueNotifier<PulseState> pulse = ValueNotifier(PulseState.calm);
@@ -65,6 +70,11 @@ class HavenEngine {
   final Set<String> _memorySuppressed = {};
 
   Set<String> get suppressedIds => Set.unmodifiable(_memorySuppressed);
+
+  void applyDevTime(DevTimeConfig config) {
+    _devTime = config;
+    recompute();
+  }
 
   Future<void> _hydrateMemory() async {
     final db = _database;
@@ -121,6 +131,7 @@ class HavenEngine {
       plans: _plans.plans,
       now: now,
       suppressedIds: _memorySuppressed,
+      momentExpiry: _devTime.momentExpiryFor(now),
     );
 
     _moments.syncCandidates(observed);

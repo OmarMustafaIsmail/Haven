@@ -3,8 +3,10 @@ import 'package:flutter/material.dart';
 import '../../../theme/haven_colors.dart';
 import '../../../theme/haven_spacing.dart';
 import '../../../widgets/haven_logo.dart';
+import '../../developer/developer_panel.dart';
 
 /// Concept C top bar — logo and quiet actions above the hero.
+/// Long-press the logo to open the Developer Panel.
 class HomeTopBar extends StatelessWidget {
   const HomeTopBar({super.key});
 
@@ -17,14 +19,17 @@ class HomeTopBar extends StatelessWidget {
       ),
       child: Row(
         children: [
-          DecoratedBox(
-            decoration: BoxDecoration(
-              color: HavenColors.surface.withValues(alpha: 0.92),
-              shape: BoxShape.circle,
-            ),
-            child: const Padding(
-              padding: EdgeInsets.all(6),
-              child: HavenLogo(height: 28),
+          GestureDetector(
+            onLongPress: () => DeveloperPanel.open(context),
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                color: HavenColors.surface.withValues(alpha: 0.92),
+                shape: BoxShape.circle,
+              ),
+              child: const Padding(
+                padding: EdgeInsets.all(6),
+                child: HavenLogo(height: 28),
+              ),
             ),
           ),
           const Spacer(),
