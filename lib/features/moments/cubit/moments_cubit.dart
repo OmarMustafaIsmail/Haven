@@ -1,5 +1,6 @@
 import '../../../core/cubit/base_cubit.dart';
 import '../../activity/repository/activity_repository.dart';
+import '../../engine/haven_engine.dart';
 import '../models/moment.dart';
 import '../models/moment_acknowledgement.dart';
 import '../repository/moment_repository.dart';
@@ -9,8 +10,10 @@ class MomentsCubit extends BaseCubit<MomentsState> {
   MomentsCubit({
     required MomentRepository momentRepository,
     required ActivityRepository activityRepository,
+    HavenEngine? engine,
   })  : _momentRepository = momentRepository,
         _activityRepository = activityRepository,
+        _engine = engine,
         super(const MomentsLoadedState()) {
     _momentRepository.version.addListener(_onMomentsChanged);
     _emitFromRepository();
@@ -18,6 +21,7 @@ class MomentsCubit extends BaseCubit<MomentsState> {
 
   final MomentRepository _momentRepository;
   final ActivityRepository _activityRepository;
+  final HavenEngine? _engine;
 
   static const Duration _acknowledgementDuration = Duration(milliseconds: 2200);
 
@@ -38,6 +42,7 @@ class MomentsCubit extends BaseCubit<MomentsState> {
         _momentRepository.complete(moment.id);
       case MomentActionOutcome.dismiss:
         _momentRepository.dismiss(moment.id);
+        _engine?.rememberDismissal(moment.id);
       case MomentActionOutcome.later:
         _momentRepository.dismiss(moment.id);
       case MomentActionOutcome.navigate:

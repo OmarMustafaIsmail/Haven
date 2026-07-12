@@ -1,6 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:sqflite/sqflite.dart';
 
+import '../../persistence/haven_database.dart';
 import '../models/activity_item.dart';
 
 abstract final class MockActivityData {
@@ -17,12 +19,18 @@ abstract final class MockActivityData {
       ];
 }
 
-/// In-memory Activity timeline — live updates during session.
+/// Activity timeline with optional SQLite write-through.
 class ActivityRepository {
-  ActivityRepository() {
-    _items = List<ActivityItem>.from(MockActivityData.seed());
+  ActivityRepository({
+    HavenDatabase? database,
+    bool seedMock = true,
+  }) : _database = database {
+    _items = seedMock && database == null
+        ? List<ActivityItem>.from(MockActivityData.seed())
+        : <ActivityItem>[];
   }
 
+  final HavenDatabase? _database;
   late List<ActivityItem> _items;
   final ValueNotifier<int> _version = ValueNotifier(0);
 
@@ -30,8 +38,36 @@ class ActivityRepository {
 
   List<ActivityItem> get items => List.unmodifiable(_items);
 
+  Future<void> hydrate() async {
+    final db = _database;
+    if (db == null || !db.isOpen) return;
+    final rows = await db.db.query('activity', orderBy: 'sort_order ASC');
+    _items = rows.map((r) => ActivityItem.fromMap(r)).toList();
+    _version.value++;
+  }
+
+  Future<void> _persistAll() async {
+    final db = _database;
+    if (db == null || !db.isOpen) return;
+    await db.db.delete('activity');
+    for (var i = 0; i < _items.length; i++) {
+      await db.db.insert(
+        'activity',
+        _items[i].toMap(sortOrder: i),
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      );
+    }
+  }
+
+  Future<void> replaceAll(List<ActivityItem> items) async {
+    _items = List<ActivityItem>.from(items);
+    await _persistAll();
+    _version.value++;
+  }
+
   void add(ActivityItem item) {
     _items.insert(0, item);
+    _persistAll();
     _version.value++;
   }
 

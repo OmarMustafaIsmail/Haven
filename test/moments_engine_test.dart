@@ -7,52 +7,86 @@ import 'package:haven/features/moments/models/moment.dart';
 import 'package:haven/features/moments/repository/moment_repository.dart';
 
 void main() {
+  Moment _salaryMoment() => Moment(
+        id: 'obs_cmt_salary',
+        type: MomentType.confirmation,
+        title: 'Did your salary arrive?',
+        description: 'Salary expected today.',
+        priority: 80,
+        createdAt: DateTime(2026, 7, 12),
+        actions: const [
+          MomentAction(
+            id: 'yes',
+            label: 'Yes',
+            outcome: MomentActionOutcome.complete,
+          ),
+          MomentAction(
+            id: 'not_yet',
+            label: 'Not yet',
+            outcome: MomentActionOutcome.later,
+          ),
+        ],
+      );
+
   group('MomentRepository', () {
     test('activeMoment returns highest-priority active moment', () {
       final repo = MomentRepository();
-      final active = repo.activeMoment;
+      repo.syncCandidates([
+        _salaryMoment(),
+        Moment(
+          id: 'other',
+          type: MomentType.reminder,
+          title: 'Bill',
+          description: 'Soon',
+          priority: 40,
+          createdAt: DateTime(2026, 7, 12),
+          actions: const [],
+        ),
+      ]);
 
-      expect(active, isNotNull);
-      expect(active!.id, 'moment_salary_confirm');
-      expect(active.priority, 80);
+      expect(repo.activeMoment?.id, 'obs_cmt_salary');
     });
 
     test('complete removes moment from active selection', () {
       final repo = MomentRepository();
-      repo.complete('moment_salary_confirm');
+      repo.syncCandidates([_salaryMoment()]);
+      repo.complete('obs_cmt_salary');
 
-      expect(repo.activeMoment?.id, isNot('moment_salary_confirm'));
-      expect(repo.findById('moment_salary_confirm')?.status,
-          MomentStatus.completed);
+      expect(repo.activeMoment, isNull);
+      expect(
+        repo.findById('obs_cmt_salary')?.status,
+        MomentStatus.completed,
+      );
     });
 
-    test('dismiss marks moment dismissed', () {
+    test('syncCandidates preserves completed moments', () {
       final repo = MomentRepository();
-      repo.dismiss('moment_electricity');
+      repo.syncCandidates([_salaryMoment()]);
+      repo.complete('obs_cmt_salary');
+      repo.syncCandidates([_salaryMoment()]);
 
-      expect(repo.findById('moment_electricity')?.status,
-          MomentStatus.dismissed);
+      expect(repo.findById('obs_cmt_salary')?.status, MomentStatus.completed);
+      expect(repo.activeMoment, isNull);
     });
   });
 
   group('MomentsCubit', () {
-    test('act completes moment, shows acknowledgement, adds activity', () async {
+    test('act completes moment, shows acknowledgement, adds activity',
+        () async {
       final activityRepo = ActivityRepository();
       final momentRepo = MomentRepository();
+      momentRepo.syncCandidates([_salaryMoment()]);
       final cubit = MomentsCubit(
         momentRepository: momentRepo,
         activityRepository: activityRepo,
       );
 
       final moment = momentRepo.activeMoment!;
-      expect(moment.actions, isNotEmpty);
-
       final completeAction = moment.actions.firstWhere(
         (a) => a.outcome == MomentActionOutcome.complete,
       );
 
       final actFuture = cubit.act(moment, completeAction);
-      expect(cubit.state, isA<MomentsLoadedState>());
       final during = cubit.state as MomentsLoadedState;
       expect(during.acknowledgement, isNotNull);
       expect(during.activeMoment, isNull);

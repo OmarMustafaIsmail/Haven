@@ -4,6 +4,7 @@ import 'features/shell/app_shell.dart';
 import 'theme/haven_theme.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(const HavenApp());
 }
 
@@ -16,7 +17,7 @@ class HavenApp extends StatelessWidget {
       title: 'Haven',
       debugShowCheckedModeBanner: false,
       theme: HavenTheme.light,
-      home: const AppShell(),
+      home: const HavenBootstrap(),
     );
   }
 }

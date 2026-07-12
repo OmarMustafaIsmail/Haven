@@ -13,6 +13,18 @@ class HomeData extends Equatable {
   final PulseState pulseState;
   final num safeToSpend;
 
+  HomeData copyWith({
+    String? greeting,
+    PulseState? pulseState,
+    num? safeToSpend,
+  }) {
+    return HomeData(
+      greeting: greeting ?? this.greeting,
+      pulseState: pulseState ?? this.pulseState,
+      safeToSpend: safeToSpend ?? this.safeToSpend,
+    );
+  }
+
   @override
   List<Object?> get props => [greeting, pulseState, safeToSpend];
 }

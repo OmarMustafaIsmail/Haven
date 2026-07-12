@@ -32,6 +32,22 @@ class MoneyPlace extends Equatable {
     );
   }
 
+  Map<String, Object?> toMap() => {
+        'id': id,
+        'name': name,
+        'balance': balance,
+        'source': source.name,
+      };
+
+  factory MoneyPlace.fromMap(Map<String, Object?> map) {
+    return MoneyPlace(
+      id: map['id'] as String,
+      name: map['name'] as String,
+      balance: map['balance'] as int,
+      source: MoneyPlaceSource.values.byName(map['source'] as String),
+    );
+  }
+
   @override
   List<Object?> get props => [id, name, balance, source];
 }

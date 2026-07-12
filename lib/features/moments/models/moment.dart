@@ -1,4 +1,8 @@
+import 'dart:convert';
+
 import 'package:equatable/equatable.dart';
+
+import '../../persistence/serialization.dart';
 
 /// Categories of Moments — examples only; architecture is generic.
 enum MomentType {
@@ -35,6 +39,20 @@ class MomentAction extends Equatable {
   final String label;
   final MomentActionOutcome outcome;
 
+  Map<String, Object?> toMap() => {
+        'id': id,
+        'label': label,
+        'outcome': outcome.name,
+      };
+
+  factory MomentAction.fromMap(Map<String, Object?> map) {
+    return MomentAction(
+      id: map['id'] as String,
+      label: map['label'] as String,
+      outcome: MomentActionOutcome.values.byName(map['outcome'] as String),
+    );
+  }
+
   @override
   List<Object?> get props => [id, label, outcome];
 }
@@ -65,17 +83,25 @@ class Moment extends Equatable {
   final MomentStatus status;
   final Map<String, Object?> metadata;
 
-  bool get isExpired {
+  /// Prefer [isExpiredAt] with [HavenClock] — wall clock only as fallback.
+  bool get isExpired => isExpiredAt(DateTime.now());
+
+  bool isExpiredAt(DateTime now) {
     final expires = expiresAt;
     if (expires == null) return false;
-    return DateTime.now().isAfter(expires);
+    return now.isAfter(expires);
   }
 
   bool get isActive => status == MomentStatus.active && !isExpired;
 
+  bool isActiveAt(DateTime now) =>
+      status == MomentStatus.active && !isExpiredAt(now);
+
   Moment copyWith({
     MomentStatus? status,
     Map<String, Object?>? metadata,
+    DateTime? expiresAt,
+    bool clearExpiresAt = false,
   }) {
     return Moment(
       id: id,
@@ -85,9 +111,47 @@ class Moment extends Equatable {
       actions: actions,
       priority: priority,
       createdAt: createdAt,
-      expiresAt: expiresAt,
+      expiresAt: clearExpiresAt ? null : (expiresAt ?? this.expiresAt),
       status: status ?? this.status,
       metadata: metadata ?? this.metadata,
+    );
+  }
+
+  Map<String, Object?> toMap() => {
+        'id': id,
+        'type': type.name,
+        'title': title,
+        'description': description,
+        'actions_json': jsonEncode(actions.map((a) => a.toMap()).toList()),
+        'priority': priority,
+        'created_at': HavenSerialization.dateTimeToMillis(createdAt),
+        'expires_at': HavenSerialization.dateTimeToMillis(expiresAt),
+        'status': status.name,
+        'metadata_json': jsonEncode(metadata),
+      };
+
+  factory Moment.fromMap(Map<String, Object?> map) {
+    final actionsRaw =
+        HavenSerialization.decodeJson(map['actions_json'] as String?) as List? ??
+            const [];
+    final metadataRaw =
+        HavenSerialization.decodeJson(map['metadata_json'] as String?) as Map? ??
+            const {};
+    return Moment(
+      id: map['id'] as String,
+      type: MomentType.values.byName(map['type'] as String),
+      title: map['title'] as String,
+      description: map['description'] as String,
+      actions: actionsRaw
+          .map((e) => MomentAction.fromMap(Map<String, Object?>.from(e as Map)))
+          .toList(),
+      priority: map['priority'] as int,
+      createdAt:
+          HavenSerialization.dateTimeFromMillis(map['created_at'] as int)!,
+      expiresAt:
+          HavenSerialization.dateTimeFromMillis(map['expires_at'] as int?),
+      status: MomentStatus.values.byName(map['status'] as String),
+      metadata: Map<String, Object?>.from(metadataRaw),
     );
   }
 
