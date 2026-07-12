@@ -127,4 +127,44 @@ void main() {
       expect(pulse, PulseState.attention);
     });
   });
+
+  group('Money + Plans reactivity', () {
+    test('editing a Money Place balance updates Safe to Spend and Pulse', () {
+      final money = MoneyPlaceRepository(seedMock: false);
+      final commitments = CommitmentRepository(seedMock: false);
+      final plans = PlanRepository(seedMock: false);
+      final moments = MomentRepository();
+
+      money.add(name: 'Main', balance: 20000);
+      commitments.add(
+        Commitment(
+          id: 'rent',
+          name: 'Rent',
+          direction: CommitmentDirection.outflow,
+          amount: 5000,
+          cadence: CommitmentCadence.monthly,
+          nextDate: now.add(const Duration(days: 2)),
+        ),
+      );
+
+      final engine = HavenEngine(
+        moneyPlaces: money,
+        commitments: commitments,
+        plans: plans,
+        moments: moments,
+        now: now,
+      );
+
+      final before = engine.safeToSpend.value;
+      expect(before, greaterThan(0));
+
+      final place = money.places.first;
+      money.updateBalance(id: place.id, balance: place.balance + 10000);
+
+      expect(engine.safeToSpend.value, greaterThan(before));
+      expect(engine.pulse.value, isNotNull);
+
+      engine.dispose();
+    });
+  });
 }
