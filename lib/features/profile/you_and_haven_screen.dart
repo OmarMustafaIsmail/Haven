@@ -9,6 +9,7 @@ import '../../widgets/haven_primary_button.dart';
 import '../../widgets/haven_text_button.dart';
 import '../commitments/models/commitment.dart';
 import '../developer/developer_panel.dart';
+import '../engine/safe_to_spend.dart';
 import '../shell/app_shell.dart';
 
 /// Control center — You, Haven Knows, Commitments, Learning, Preferences, Debug.
@@ -54,7 +55,10 @@ class YouAndHavenScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   _kv('Pulse', engine.pulse.value.name),
-                  _kv('Safe to Spend', '${engine.safeToSpend.value}'),
+                  _kv(
+                    'Safe to Spend',
+                    _stsLabel(engine.safeToSpend.value),
+                  ),
                   _kv(
                     'Active Moment',
                     s.momentRepository.activeMoment?.title ?? '—',
@@ -210,6 +214,17 @@ class YouAndHavenScreen extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  static String _stsLabel(SafeToSpendResult sts) {
+    switch (sts.state) {
+      case SafeToSpendState.unknown:
+        return 'Unknown';
+      case SafeToSpendState.estimated:
+        return 'Estimated · ${sts.displayAmount ?? 0}';
+      case SafeToSpendState.confident:
+        return 'Confident · ${sts.displayAmount ?? 0}';
+    }
   }
 }
 

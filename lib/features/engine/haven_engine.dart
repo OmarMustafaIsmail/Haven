@@ -60,7 +60,8 @@ class HavenEngine {
   HavenClock get clock => _clock;
   DevTimeConfig get devTime => _devTime;
 
-  final ValueNotifier<int> safeToSpend = ValueNotifier(0);
+  final ValueNotifier<SafeToSpendResult> safeToSpend =
+      ValueNotifier(SafeToSpendResult.empty);
   final ValueNotifier<PulseState> pulse = ValueNotifier(PulseState.calm);
   final ValueNotifier<List<Moment>> insights = ValueNotifier(const []);
 
@@ -123,7 +124,7 @@ class HavenEngine {
           commitments: _commitments.items,
           activePlans: activePlans,
           now: now,
-          safeToSpend: sts,
+          safeToSpend: sts.amount ?? 0,
         );
 
     final observed = IntelligenceEngine.observe(
