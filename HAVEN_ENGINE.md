@@ -114,6 +114,9 @@ Not merely transactions. Activity includes:
 - Plan milestones
 - Money Place changes
 - Confirmed observations
+- Quiet learning Haven shares in human language ("Haven learned your payday")
+
+Activity is **not** the engine's diary. Never log recalculations, ranking, or internal state changes.
 
 Activity is what the member can look back on — and what the Intelligence Engine remembers.
 
@@ -121,7 +124,30 @@ Activity is what the member can look back on — and what the Intelligence Engin
 
 ## What Haven Derives
 
-From the same facts, Haven produces independent readings. They are **siblings**, not a chain.
+From the same facts **and time**, Haven produces independent readings in **one recompute**. They are **siblings**, not a pipeline.
+
+```
+Facts + Time changed
+        ↓
+      Engine
+        ↓
+ STS · Pulse · Plan confidence · Moments · Insights
+   (all recalculate together — none feeds another)
+```
+
+Wrong mental model: Money Place → Plan → STS → Pulse.
+
+Right mental model: facts moved; everything rereads the facts.
+
+### Engine Confidence
+
+A judgment of **how much Haven actually knows** — Low / Medium / High — not a checklist of required form fields.
+
+Safe to Spend **reflects** Engine Confidence. Cash without salary can still be Medium. Prefer uncertainty over false precision; do not invent floors from an empty picture.
+
+### Explainability
+
+Every derivation should eventually answer **Why** (Pulse, Plan confidence, Moment, Insight). Safe to Spend Why is the first instance of a product pattern, not a one-off screen.
 
 ### Safe to Spend
 

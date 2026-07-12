@@ -1,34 +1,50 @@
 # Engine Validation Checklist
 
-Manual smoke for the Haven Engine Validation Sprint (PR A → B → C).
+Manual smoke + **Product Confidence** scorecard (PD-045).
 
 Run on Android emulator after clearing `build\.cxx` if native CMake locks recur.
 
-## Safe to Spend trust (PR A)
+## Product Confidence
 
-- [ ] Empty member (no Money Places) → **Unknown** — no large floor; CTAs present
-- [ ] Places without salary / undated plans → **Estimated** — "Around X" + "Based on what Haven currently knows."
-- [ ] Places + inflow + outflow/runway + all active plans dated → **Confident**
-- [ ] Tap Safe to Spend → Why sheet shows available / commitments / plan hold / margin only
+| Capability | Status | What would move it |
+|---|---|---|
+| Safe to Spend | 🟡 | Land Engine Confidence continuum (PD-040); keep Why |
+| Pulse | 🟢 | Ritual + sibling recompute shipped |
+| Plans | 🟡 | Optional allocation UX (PD-041); connect-money Moment |
+| Moments | 🔴 | Stronger ranking evidence + Moment Why (PD-042) |
+| Learning | 🟡 | Human "Haven learned…" copy only (PD-044) |
+| Insights | ⚪ | Depth / Why not validated |
 
-## Plans + allocation lens (PR B)
+## Smoke — Safe to Spend
 
-- [ ] Create plan is 5 steps; target date required; multi-select places; allocation capped by selected balances
-- [ ] Plan row / detail show Confidence · High / Medium / Low
-- [ ] Edit allocation on detail writes Activity ("Plan allocation updated")
-- [ ] Change a connected Money Place balance → effective progress and confidence update; STS may change
+- [ ] Cash without salary is **not** automatically blank/Unknown — Engine Confidence Medium possible (PD-040)
+- [ ] Thin picture → cautious copy; rich picture → confident floor
+- [ ] Tap Safe to Spend → Why (first of many Whys — PD-042)
 
-## Inspector + Activity + compressed time (PR C)
+## Smoke — Plans
 
-- [ ] Developer Panel → **Inspector** tab: Facts → Derived → Candidates → Winning → Learning
-- [ ] You & Haven → Open Developer Panel reaches the same surface
-- [ ] Enable compressed time → Tools shows salary (~2m) / commitment (~5m) / plan (~10m) cadences
-- [ ] Completing a Moment, editing money, dismissing with learning, updating allocation → human Activity story labels (not technical dumps)
+- [ ] Create plan with date, **without** places/allocation — allowed (PD-041)
+- [ ] No allocation → Low plan confidence; Moment can ask to connect money
+- [ ] With allocation, place balance change recalculates siblings in one engine pass (PD-043)
+
+## Smoke — Inspector + Time
+
+- [ ] Inspector: Facts → Derived → Candidates → Winning → Learning
+- [ ] Inspector shows **Time**: simulated clock, upcoming commitments, upcoming plan deadlines, next compressed tick / recalculation note
+- [ ] Compressed cadences still fire Moments through IntelligenceEngine
+
+## Smoke — Activity (member story)
+
+- [ ] ✓ Salary confirmed / plan completed / balance updated / Haven learned payday
+- [ ] ✗ No "STS recalculated" / engine diary rows (PD-044)
+
+## Architecture check
+
+- [ ] No feature described as Money → Plan → STS → Pulse chain
+- [ ] Model is Facts + Time → Engine → sibling readings (PD-043)
 
 ## Automated
 
 ```bash
 flutter test
 ```
-
-Expect STS state tests, allocation ripple (balance → confidence → STS), and widget coverage for plan confidence / progress.
