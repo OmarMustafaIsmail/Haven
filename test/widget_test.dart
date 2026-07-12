@@ -1,19 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:haven/features/activity/repository/activity_repository.dart';
-import 'package:haven/features/home/cubit/home_cubit.dart';
-import 'package:haven/features/home/service/home_service.dart';
-import 'package:haven/features/moments/cubit/moments_cubit.dart';
-import 'package:haven/features/moments/repository/moment_repository.dart';
-import 'package:haven/features/money/cubit/money_cubit.dart';
-import 'package:haven/features/money/repository/money_place_repository.dart';
 import 'package:haven/features/shell/app_shell.dart';
 import 'package:haven/pulse/controller/pulse_ritual_controller.dart';
 import 'package:haven/pulse/financial_pulse.dart';
 import 'package:haven/pulse/visual/pulse_circle.dart';
 import 'package:haven/theme/haven_motion.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
 Future<void> _waitForHome(WidgetTester tester) async {
   await tester.pump();
@@ -31,6 +23,7 @@ Future<void> _pullCheckIn(WidgetTester tester) async {
     find.textContaining('Good afternoon, Omar'),
     Offset(0, PulseRitualController.pullThreshold + 40),
     const Duration(milliseconds: 200),
+    warnIfMissed: false,
   );
   await _pumpDuration(tester, HavenMotion.pulseHeartbeatTotalDuration);
   await _pumpDuration(tester, HavenMotion.pulseLineDuration);
@@ -40,55 +33,16 @@ Future<void> _pullCheckIn(WidgetTester tester) async {
   await tester.pump();
 }
 
-/// Test harness mirroring AppShell providers without bottom nav transitions.
-class _TestHavenApp extends StatefulWidget {
-  const _TestHavenApp();
-
-  @override
-  State<_TestHavenApp> createState() => _TestHavenAppState();
-}
-
-class _TestHavenAppState extends State<_TestHavenApp> {
-  late final ActivityRepository _activityRepository;
-  late final MomentRepository _momentRepository;
-  late final MoneyPlaceRepository _moneyPlaceRepository;
-
-  @override
-  void initState() {
-    super.initState();
-    _activityRepository = ActivityRepository();
-    _momentRepository = MomentRepository();
-    _moneyPlaceRepository = MoneyPlaceRepository(
-      activityRepository: _activityRepository,
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider(create: (_) => HomeCubit(const HomeService())),
-        BlocProvider(
-          create: (_) => MomentsCubit(
-            momentRepository: _momentRepository,
-            activityRepository: _activityRepository,
-          ),
-        ),
-        BlocProvider(
-          create: (_) => MoneyCubit(repository: _moneyPlaceRepository),
-        ),
-      ],
-      child: const MaterialApp(home: AppShell()),
-    );
-  }
+Future<void> _pumpApp(WidgetTester tester) async {
+  await tester.pumpWidget(const MaterialApp(home: AppShell()));
+  await _waitForHome(tester);
 }
 
 void main() {
   testWidgets('Home shows Hero layers with active Moment', (
     WidgetTester tester,
   ) async {
-    await tester.pumpWidget(const _TestHavenApp());
-    await _waitForHome(tester);
+    await _pumpApp(tester);
 
     expect(find.textContaining('Good afternoon, Omar'), findsOneWidget);
     expect(find.text('Some things need attention.'), findsOneWidget);
@@ -110,14 +64,13 @@ void main() {
   testWidgets('Completing Moment shows acknowledgement and Activity row', (
     WidgetTester tester,
   ) async {
-    await tester.pumpWidget(const _TestHavenApp());
-    await _waitForHome(tester);
+    await _pumpApp(tester);
 
     await tester.tap(find.text('Yes'));
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 100));
 
-    expect(find.textContaining("Thanks"), findsOneWidget);
+    expect(find.textContaining('Thanks'), findsOneWidget);
 
     await tester.drag(find.byType(ListView), const Offset(0, -320));
     await tester.pump();
@@ -128,11 +81,68 @@ void main() {
     await tester.pump();
   });
 
+  testWidgets('Plans layer opens from bottom nav with hierarchy', (
+    WidgetTester tester,
+  ) async {
+    await _pumpApp(tester);
+
+    await tester.tap(find.text('Plans'));
+    await tester.pump();
+    await tester.pump(HavenMotion.layerBodyMorphDuration);
+    await tester.pump();
+
+    expect(find.text('Your Plans'), findsOneWidget);
+    expect(
+      find.textContaining("working toward the life you're building"),
+      findsOneWidget,
+    );
+    expect(find.text('Active Plans'), findsOneWidget);
+    expect(find.text('Apartment Fund'), findsOneWidget);
+    expect(find.text('Emergency Fund'), findsOneWidget);
+    expect(find.text('Completed Plans'), findsOneWidget);
+    expect(find.text('Laptop Fund'), findsOneWidget);
+    expect(find.text('Suggested Plans'), findsOneWidget);
+    expect(find.text('Vacation'), findsOneWidget);
+    expect(find.text('Recent Plan Activity'), findsOneWidget);
+    expect(find.text('+ Create a plan'), findsOneWidget);
+  });
+
+  testWidgets('Opening a plan shows detail progress', (
+    WidgetTester tester,
+  ) async {
+    await _pumpApp(tester);
+
+    await tester.tap(find.text('Plans'));
+    await tester.pump();
+    await tester.pump(HavenMotion.layerBodyMorphDuration);
+    await tester.pump();
+
+    await tester.drag(find.byType(ListView), const Offset(0, -200));
+    await tester.pump();
+
+    await tester.ensureVisible(find.text('Apartment Fund'));
+    await tester.pump();
+    await tester.tap(find.text('Apartment Fund'));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
+
+    expect(find.text('Progress'), findsOneWidget);
+    expect(find.text('50%'), findsOneWidget);
+    expect(find.text('Target'), findsOneWidget);
+    expect(find.text('Allocated'), findsOneWidget);
+    expect(find.text('Connected Money Place'), findsOneWidget);
+    expect(find.text('Savings'), findsOneWidget);
+    expect(find.text('Upcoming milestones'), findsOneWidget);
+
+    await tester.drag(find.byType(ListView).last, const Offset(0, -240));
+    await tester.pump();
+    expect(find.text('Recent contributions'), findsOneWidget);
+  });
+
   testWidgets('Home header shows passive Pulse circle', (
     WidgetTester tester,
   ) async {
-    await tester.pumpWidget(const _TestHavenApp());
-    await _waitForHome(tester);
+    await _pumpApp(tester);
 
     expect(find.textContaining('Good afternoon, Omar'), findsOneWidget);
     expect(find.byType(PulseCircle), findsOneWidget);
@@ -142,8 +152,7 @@ void main() {
   testWidgets('Home completes pull check-in ritual', (
     WidgetTester tester,
   ) async {
-    await tester.pumpWidget(const _TestHavenApp());
-    await _waitForHome(tester);
+    await _pumpApp(tester);
 
     await _pullCheckIn(tester);
 
@@ -156,13 +165,13 @@ void main() {
   testWidgets('Home shows Pulse Line during Check-In reading', (
     WidgetTester tester,
   ) async {
-    await tester.pumpWidget(const _TestHavenApp());
-    await _waitForHome(tester);
+    await _pumpApp(tester);
 
     await tester.timedDrag(
       find.textContaining('Good afternoon, Omar'),
       Offset(0, PulseRitualController.pullThreshold + 40),
       const Duration(milliseconds: 200),
+      warnIfMissed: false,
     );
     await tester.pump(const Duration(milliseconds: 400));
 

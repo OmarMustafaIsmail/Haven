@@ -43,6 +43,9 @@ The Haven component catalog — shared UI building blocks and product-defining w
 | [MoneyTotalSection](#moneytotalsection) | `lib/features/money/widgets/money_hero.dart` | Money layer |
 | [MoneyLivesInSection](#moneylivesinsection) | `lib/features/money/widgets/money_lives_in_section.dart` | Money layer |
 | [ConnectedPlansSection](#connectedplanssection) | `lib/features/money/widgets/connected_plans_section.dart` | Money layer |
+| [PlansLayerBody](#planslayerbody) | `lib/features/plans/widgets/plans_layer_body.dart` | Plans layer |
+| [CreatePlanSheet](#createplansheet) | `lib/features/plans/widgets/create_plan_sheet.dart` | Plans layer |
+| [PlanDetailSheet](#plandetailsheet) | `lib/features/plans/widgets/plan_detail_sheet.dart` | Plans layer |
 | [RecentMovementSection](#recentmovementsection) | `lib/features/money/widgets/recent_movement_section.dart` | Money layer |
 | [HavenBottomNav](#havenbottomnav) | `lib/features/shell/widgets/haven_bottom_nav.dart` | Shell |
 | [HavenLogo](#havenlogo) | `lib/widgets/haven_logo.dart` | Global |
@@ -433,7 +436,8 @@ Five-tab **depth affordance** — selects Haven layer, not a page router (PD-031
 |---|---|
 | Home | Active — surface layer |
 | Money | Active — deeper layer |
-| Plans, Insights, Profile | Disabled placeholder |
+| Plans | Active — intent layer |
+| Insights, Profile | Disabled placeholder |
 
 ### States
 
@@ -445,7 +449,7 @@ Vertical padding: `HavenSpacing.sm`. Top border: `borderSubtle`.
 
 ### Interaction
 
-Tap Home or Money triggers Pulse-anchored layer transition — no widget swap. Same transition as Safe to Spend chevron for Money entry.
+Tap Home, Money, or Plans triggers layer morph — no page push. Same transition as Safe to Spend chevron for Money entry.
 
 ### Motion
 
@@ -473,7 +477,7 @@ Single composition: `FinancialPulse` + `HavenHeroCard` + `HavenLayerBody`.
 
 ### States
 
-`HavenLayer.home` · `HavenLayer.money` · transitioning (blocks re-entry).
+`HavenLayer.home` · `HavenLayer.money` · `HavenLayer.plans` · transitioning (blocks re-entry).
 
 ### Interaction
 

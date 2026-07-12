@@ -47,6 +47,7 @@ Every important discussion ends with a decision recorded here. Any new developer
 | PD-033 | Five core primitives — Pulse, Moment, Money Place, Plan, Activity | Locked |
 | PD-034 | Moment primitive — generic engine, Hero, acknowledgement, Activity | Locked |
 | PD-035 | Money Place — manual source, CRUD, Connected future | Locked |
+| PD-036 | Plans layer — intent, create/detail, layered navigation | Locked |
 
 ---
 
@@ -575,3 +576,27 @@ Reference: [HAVEN_MANIFESTO.md](HAVEN_MANIFESTO.md), [PRODUCT_ARCHITECTURE.md](P
 **Status:** Locked
 
 **Date:** 2026-07-11
+
+---
+
+# PD-036
+
+**Decision:** **Plans** is a first-class Haven layer answering *"What is my money working toward?"* Members create plans, view progress, and see plan activity — all within the layered shell (PD-031).
+
+**Reason:** Without Plans, Money Places are static storage. Plans turn money into intent and close the loop: Place → Plan → Moment → Activity.
+
+**Status:** Locked
+
+**Rules:**
+
+1. Same persistent chrome as Money — Greeting, Pulse, HavenHeroCard.
+2. Body hierarchy: Your Plans → Active → Completed → Suggested → Recent Plan Activity.
+3. Typography-first; cards only for plan rows with progress.
+4. Create flow is lightweight (name + target required; rest optional).
+5. Detail shows progress, target, allocated, connected place, milestones, contributions.
+6. Intelligence recommendations (increase allocation, pause, adjust target) are **not** MVP.
+7. Bottom nav Plans tab enabled; morph transition matches Home ↔ Money philosophy.
+
+**Date:** 2026-07-12
+
+Reference: [PRODUCT_ARCHITECTURE.md](PRODUCT_ARCHITECTURE.md), [HDL/20-components.md](HDL/20-components.md)

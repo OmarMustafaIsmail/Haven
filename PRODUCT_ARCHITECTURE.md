@@ -257,9 +257,44 @@ Same Pulse-anchored transition whether entering via bottom nav or Safe to Spend 
 
 ## Plans
 
-Goals, funds, and forward-looking financial intent (PD-010).
+Plans is a **layer**, not a separate screen (PD-031, PD-036).
 
-Recommendations on Home may reference Plans (e.g. "Move 12,000 EGP to your Apartment fund").
+Answers: **"What is my money working toward?"** — intent, not structure.
+
+Money Place → Fund → Plan → can generate a Moment → appears on Home → creates Activity.
+
+### What persists from Home
+
+Greeting, Pulse, HavenHeroCard remain visible. Plans body morphs beneath — same continuity as Money.
+
+### Plans body (beneath hero)
+
+```
+Your Plans
+Your money is working toward the life you're building.
+
+Active Plans
+Apartment Fund · Emergency Fund
+
+Completed Plans
+Laptop Fund
+
+Suggested Plans
+Vacation
+
+Recent Plan Activity
+Contribution · Milestone
+```
+
+Typography and whitespace carry hierarchy. Cards only where they improve comprehension (plan rows with progress).
+
+### Creating a Plan
+
+Lightweight sheet: name + target amount required; optional date, connected Money Place, icon, color.
+
+### Plan Detail
+
+Progress, target, allocated money, connected place, upcoming milestones, recent contributions. Intelligence recommendations are future — not MVP.
 
 ---
 
@@ -346,7 +381,7 @@ Each Place has a name, balance, and **source** (`Manual` in MVP; `Connected` whe
 
 ### Plan
 
-What money is working toward — goals and funds (PD-010). Connected Plans on the Money layer reference Plans. Full Plans layer is future work.
+What money is working toward — goals and funds (PD-036). A first-class layer with create, detail, and activity. Connected Plans on the Money layer bridge into Plans. Creating or starting a Plan can write Activity and later generate Moments.
 
 ### Activity
 

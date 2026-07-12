@@ -46,7 +46,7 @@ class HavenBottomNav extends StatelessWidget {
                 icon: Icons.flag_outlined,
                 label: 'Plans',
                 isActive: activeItem == HavenNavItem.plans,
-                enabled: false,
+                onTap: () => onItemSelected?.call(HavenNavItem.plans),
               ),
               _NavIcon(
                 icon: Icons.insights_outlined,

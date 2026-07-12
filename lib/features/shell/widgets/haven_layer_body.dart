@@ -14,96 +14,130 @@ import '../../money/widgets/money_hero.dart';
 import '../../money/widgets/money_lives_in_section.dart';
 import '../../money/widgets/money_place_editor_sheet.dart';
 import '../../money/widgets/recent_movement_section.dart';
+import '../../plans/cubit/plans_cubit.dart';
+import '../../plans/cubit/plans_state.dart';
+import '../../plans/widgets/plans_layer_body.dart';
 import '../haven_layer.dart';
 
 /// Morphing body beneath persistent HavenHeroCard.
+///
+/// During transitions, crossfades [fromLayer] → [layer] using [morphProgress].
 class HavenLayerBody extends StatelessWidget {
   const HavenLayerBody({
     super.key,
     required this.layer,
     required this.activityRepository,
+    this.fromLayer,
     this.transitioning = false,
     this.morphProgress = 0,
+    this.onEnterPlans,
   });
 
   final HavenLayer layer;
+  final HavenLayer? fromLayer;
   final ActivityRepository activityRepository;
   final bool transitioning;
   final double morphProgress;
-
-  bool get _showHome => transitioning || layer == HavenLayer.home;
-  bool get _showMoney => transitioning || layer == HavenLayer.money;
+  final VoidCallback? onEnterPlans;
 
   @override
   Widget build(BuildContext context) {
     final slide = HavenMotion.layerBodySlideOffset;
+    final from = fromLayer ?? layer;
     final t = transitioning
         ? HavenMotion.layerCurve.transform(morphProgress)
-        : (layer == HavenLayer.money ? 1.0 : 0.0);
+        : 1.0;
+    final deepening = layer.depth >= from.depth;
 
-    final homeOpacity = transitioning ? 1 - t : 1.0;
-    final moneyOpacity = transitioning ? t : 1.0;
+    Widget paneFor(HavenLayer target) {
+      return switch (target) {
+        HavenLayer.home => ValueListenableBuilder<int>(
+            valueListenable: activityRepository.version,
+            builder: (context, _, __) {
+              return ActivitySection(activities: activityRepository.items);
+            },
+          ),
+        HavenLayer.money => _MoneyBody(onEnterPlans: onEnterPlans),
+        HavenLayer.plans => const PlansLayerBody(),
+      };
+    }
+
+    if (!transitioning) {
+      return paneFor(layer);
+    }
+
+    final fromOpacity = 1 - t;
+    final toOpacity = t;
+    final fromOffset = deepening ? t * slide : -t * slide * 0.4;
+    final toOffset = deepening ? (1 - t) * slide : (1 - t) * (-slide * 0.4);
 
     return Stack(
       clipBehavior: Clip.none,
       alignment: Alignment.topCenter,
       children: [
-        if (_showHome)
-          _LayerPane(
-            opacity: homeOpacity,
-            offsetY: transitioning ? t * slide : 0,
-            ignoring: homeOpacity < 0.05,
-            child: ValueListenableBuilder<int>(
-              valueListenable: activityRepository.version,
-              builder: (context, _, __) {
-                return ActivitySection(
-                  activities: activityRepository.items,
-                );
-              },
-            ),
-          ),
-        if (_showMoney)
-          _LayerPane(
-            opacity: moneyOpacity,
-            offsetY: transitioning ? (1 - t) * slide : 0,
-            ignoring: moneyOpacity < 0.05,
-            child: BlocBuilder<MoneyCubit, MoneyState>(
-              builder: (context, moneyState) {
-                final places = moneyState is MoneyLoadedState
-                    ? moneyState.places
-                    : <MoneyPlace>[];
-                final total = moneyState is MoneyLoadedState
-                    ? moneyState.totalBalance
-                    : 0;
-
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    const SizedBox(height: HavenSpacing.lg),
-                    MoneyTotalSection(totalBalance: total),
-                    const SizedBox(height: HavenSpacing.xxl),
-                    MoneyLivesInSection(
-                      places: places,
-                      onPlaceTap: (place) => MoneyPlaceEditorSheet.show(
-                        context,
-                        place: place,
-                      ),
-                      onAddPlace: () => MoneyPlaceEditorSheet.show(context),
-                    ),
-                    const SizedBox(height: HavenSpacing.xxl),
-                    const ConnectedPlansSection(
-                      plans: MockMoneyData.plans,
-                    ),
-                    const SizedBox(height: HavenSpacing.xxl),
-                    const RecentMovementSection(
-                      movements: MockMoneyData.movements,
-                    ),
-                  ],
-                );
-              },
-            ),
-          ),
+        _LayerPane(
+          opacity: fromOpacity,
+          offsetY: fromOffset,
+          ignoring: fromOpacity < 0.05,
+          child: paneFor(from),
+        ),
+        _LayerPane(
+          opacity: toOpacity,
+          offsetY: toOffset,
+          ignoring: toOpacity < 0.05,
+          child: paneFor(layer),
+        ),
       ],
+    );
+  }
+}
+
+class _MoneyBody extends StatelessWidget {
+  const _MoneyBody({this.onEnterPlans});
+
+  final VoidCallback? onEnterPlans;
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<MoneyCubit, MoneyState>(
+      builder: (context, moneyState) {
+        final places = moneyState is MoneyLoadedState
+            ? moneyState.places
+            : <MoneyPlace>[];
+        final total =
+            moneyState is MoneyLoadedState ? moneyState.totalBalance : 0;
+
+        final plansState = context.watch<PlansCubit>().state;
+        final connectedNames = plansState is PlansLoadedState
+            ? plansState.active.map((p) => p.name).toList()
+            : MockMoneyData.plans.map((p) => p.name).toList();
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            const SizedBox(height: HavenSpacing.lg),
+            MoneyTotalSection(totalBalance: total),
+            const SizedBox(height: HavenSpacing.xxl),
+            MoneyLivesInSection(
+              places: places,
+              onPlaceTap: (place) => MoneyPlaceEditorSheet.show(
+                context,
+                place: place,
+              ),
+              onAddPlace: () => MoneyPlaceEditorSheet.show(context),
+            ),
+            const SizedBox(height: HavenSpacing.xxl),
+            ConnectedPlansSection(
+              planNames: connectedNames,
+              onSeePlans: onEnterPlans,
+            ),
+            const SizedBox(height: HavenSpacing.xxl),
+            const RecentMovementSection(
+              movements: MockMoneyData.movements,
+            ),
+          ],
+        );
+      },
     );
   }
 }
