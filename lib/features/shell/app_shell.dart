@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../activity/repository/activity_repository.dart';
+import '../auth/auth_flow.dart';
 import '../commitments/models/mock_commitments.dart';
 import '../commitments/repository/commitment_repository.dart';
 import '../developer/dev_time_config.dart';
@@ -16,15 +17,17 @@ import '../moments/repository/moment_repository.dart';
 import '../money/cubit/money_cubit.dart';
 import '../money/models/mock_money_data.dart';
 import '../money/repository/money_place_repository.dart';
+import '../onboarding/onboarding_flow.dart';
 import '../persistence/haven_database.dart';
 import '../plans/cubit/plans_cubit.dart';
 import '../plans/models/mock_plans_data.dart';
 import '../plans/repository/plan_repository.dart';
+import '../settings/member_settings.dart';
 import 'haven_experience.dart';
 import 'haven_layer.dart';
 import 'widgets/haven_bottom_nav.dart';
 
-/// Bootstrap container — opens DB, hydrates repos, then builds [AppShell].
+/// Bootstrap container — opens DB, hydrates repos, then gates Auth → Onboarding → App.
 class HavenBootstrap extends StatefulWidget {
   const HavenBootstrap({super.key});
 
@@ -61,9 +64,58 @@ class _HavenBootstrapState extends State<HavenBootstrap> {
             body: Center(child: CircularProgressIndicator()),
           );
         }
-        return AppShell(services: snapshot.data!);
+        return HavenRoot(services: snapshot.data!);
       },
     );
+  }
+}
+
+/// Launch gate: Auth → Onboarding → Experience.
+class HavenRoot extends StatefulWidget {
+  const HavenRoot({super.key, required this.services});
+
+  final HavenAppServices services;
+
+  @override
+  State<HavenRoot> createState() => _HavenRootState();
+}
+
+class _HavenRootState extends State<HavenRoot> {
+  late bool _signedIn;
+  late bool _onboarded;
+
+  @override
+  void initState() {
+    super.initState();
+    _signedIn = widget.services.settings.isSignedIn;
+    _onboarded = widget.services.settings.hasOnboarded;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final s = widget.services;
+    if (!_signedIn) {
+      return AuthFlow(
+        onContinue: () async {
+          await s.settings.setSignedIn(true);
+          if (mounted) setState(() => _signedIn = true);
+        },
+      );
+    }
+    if (!_onboarded) {
+      return OnboardingFlow(
+        settings: s.settings,
+        moneyPlaces: s.moneyPlaceRepository,
+        commitments: s.commitmentRepository,
+        plans: s.planRepository,
+        now: s.clock.now(),
+        onFinished: () {
+          s.engine.recompute();
+          if (mounted) setState(() => _onboarded = true);
+        },
+      );
+    }
+    return AppShell(services: s);
   }
 }
 
@@ -79,6 +131,7 @@ class HavenAppServices {
     required this.commitmentRepository,
     required this.engine,
     required this.devTime,
+    required this.settings,
   });
 
   final HavenDatabase? database;
@@ -90,29 +143,35 @@ class HavenAppServices {
   final CommitmentRepository commitmentRepository;
   final HavenEngine engine;
   final DevTimeController devTime;
+  final MemberSettings settings;
 
-  /// Production / device: open SQLite and hydrate.
+  /// Production / device: open SQLite and hydrate. Fresh install = empty.
   static Future<HavenAppServices> create() async {
     final database = HavenDatabase.instance;
     await database.open();
-    return _build(database: database, seedIfEmpty: true);
+    return _build(database: database, seedIfEmpty: false);
   }
 
-  /// Tests: in-memory SQLite, or pure in-memory repos without DB.
+  /// Tests: in-memory repos with demo seed so existing widget tests stay green.
   static Future<HavenAppServices> createForTest({
     bool useSqlite = false,
     DateTime? now,
+    bool seedIfEmpty = true,
   }) async {
     HavenDatabase? database;
     if (useSqlite) {
       database = HavenDatabase.instance;
       await database.openInMemory();
     }
-    return _build(
+    final services = await _build(
       database: database,
-      seedIfEmpty: true,
+      seedIfEmpty: seedIfEmpty,
       now: now ?? DateTime(2026, 7, 12),
     );
+    await services.settings.setSignedIn(true);
+    await services.settings.setOnboarded(true);
+    await services.settings.setMemberName('Omar');
+    return services;
   }
 
   static Future<HavenAppServices> _build({
@@ -132,26 +191,29 @@ class HavenAppServices {
       }
     }
 
+    final settings = MemberSettings(database);
+    await settings.hydrate();
+
     final hasDb = database != null;
     final activity = ActivityRepository(
       database: database,
-      seedMock: !hasDb,
+      seedMock: !hasDb && seedIfEmpty,
     );
     final moments = MomentRepository(database: database, clock: clock);
     final money = MoneyPlaceRepository(
       activityRepository: activity,
       database: database,
-      seedMock: !hasDb,
+      seedMock: !hasDb && seedIfEmpty,
     );
     final plans = PlanRepository(
       activityRepository: activity,
       database: database,
-      seedMock: !hasDb,
+      seedMock: !hasDb && seedIfEmpty,
     );
     final commitments = CommitmentRepository(
       now: clock.now(),
       database: database,
-      seedMock: !hasDb,
+      seedMock: !hasDb && seedIfEmpty,
     );
 
     if (hasDb) {
@@ -205,6 +267,7 @@ class HavenAppServices {
       commitmentRepository: commitments,
       engine: engine,
       devTime: devTime,
+      settings: settings,
     );
   }
 
@@ -239,6 +302,9 @@ class HavenAppServices {
     if (db != null && db.isOpen) {
       await db.setSetting(HavenSettingsKeys.clockOffsetMs, '0');
     }
+    await settings.clearSession();
+    await settings.setMemberName('there');
+    await settings.setCurrency('EGP');
     await devTime.setEnabled(false);
     engine.applyDevTime(devTime.config);
     engine.recompute();
@@ -306,7 +372,9 @@ class _AppShellState extends State<AppShell> {
       providers: [
         BlocProvider(
           create: (_) {
-            final cubit = HomeCubit(const HomeService());
+            final cubit = HomeCubit(
+              HomeService(memberName: s.settings.memberName),
+            );
             void syncSts() =>
                 cubit.applySafeToSpend(_engine.safeToSpend.value);
             void syncPulse() => cubit.applyPulse(_engine.pulse.value);
