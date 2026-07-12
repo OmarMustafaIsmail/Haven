@@ -12,8 +12,12 @@ abstract final class IntelligenceEngine {
     required List<Plan> plans,
     required DateTime now,
     Set<String> suppressedIds = const {},
+    Duration momentExpiry = const Duration(days: 1),
   }) {
     final candidates = <Moment>[];
+    final shortExpiry = momentExpiry;
+    final midExpiry = momentExpiry * 3;
+    final longExpiry = momentExpiry * 5;
 
     for (final c in commitments) {
       if (suppressedIds.contains('obs_${c.id}')) continue;
@@ -31,7 +35,7 @@ abstract final class IntelligenceEngine {
               confidence: (c.confidence * 100).round(),
             ),
             createdAt: now,
-            expiresAt: now.add(const Duration(days: 1)),
+            expiresAt: now.add(shortExpiry),
             actions: const [
               MomentAction(
                 id: 'yes',
@@ -96,7 +100,7 @@ abstract final class IntelligenceEngine {
             description: 'Pace looks tight against your target.',
             priority: _score(urgency: 70, relevance: 80, confidence: 65),
             createdAt: now,
-            expiresAt: now.add(const Duration(days: 3)),
+            expiresAt: now.add(midExpiry),
             actions: const [
               MomentAction(
                 id: 'view',
@@ -123,7 +127,7 @@ abstract final class IntelligenceEngine {
             description: 'Halfway to your goal.',
             priority: _score(urgency: 40, relevance: 75, confidence: 90),
             createdAt: now,
-            expiresAt: now.add(const Duration(days: 5)),
+            expiresAt: now.add(longExpiry),
             actions: const [
               MomentAction(
                 id: 'view_plan',
